@@ -8,6 +8,9 @@ const appointmentSchema = new mongoose.Schema(
       required: true,
     },
     date: { type: Date, required: true },
+    time: { type: String, required: true },
+    status: { type: String, required: true },
+    reason: { type: String, required: true },
     doctor_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Doctor",
@@ -19,13 +22,4 @@ const appointmentSchema = new mongoose.Schema(
 
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 
-
-/api/appointment
-
-{
-user_id:""
-doctor_id:""
-date:""
-}
-
-module.exports = { Appointment };
+module.exports = Appointment;

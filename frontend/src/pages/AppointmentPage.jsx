@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const AppointmentPage = () => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate(); 
   const [hoveredSlot, setHoveredSlot] = useState(null);
   const [hoveredDoctor, setHoveredDoctor] = useState(null);
   const [doctor,setDoctor] = useState({})
@@ -154,7 +154,7 @@ const AppointmentPage = () => {
     <div style={styles.appointmentPage}>
       <div style={{ ...styles.doctorDetails, ...styles.responsiveSection }}>
         <div style={styles.doctorImage}>
-          <img src="" alt="Doctor" style={{ width: "100%", height: "100%" }} />
+          <img src="https://img.freepik.com/free-photo/front-view-female-veterinarian-observing-little-dog-yellow-wall_179666-12493.jpg" alt="Doctor" style={{ width: "100%", height: "100%" }} />
         </div>
         <div style={styles.doctorInfo}>
           <h1>

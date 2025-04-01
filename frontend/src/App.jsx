@@ -22,6 +22,8 @@ import CollectionProducts from "./pages/CollectionProducts";
 import DocHomePage from "./pages/DocHomePage";
 import AppointmentPage from "./pages/AppointmentPage";
 import CollectionDocs from "./pages/CollectionDocs";
+import SchedulePage from "./pages/Schedule";
+
 
 import { Provider } from "react-redux";
 import store from "./redux/store";
@@ -37,6 +39,7 @@ const App = () => {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="schedule" element={<SchedulePage />} />
           <Route path="profile" element={<Profile />} /> {/* Changed to lowercase */}
           <Route path="petsall" element={<CollectionPets />} /> {/* Removed leading slash */}
           <Route path="productsall" element={<CollectionProducts />} /> {/* Removed leading slash */}
