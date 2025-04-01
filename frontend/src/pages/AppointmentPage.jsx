@@ -85,7 +85,7 @@ const AppointmentPage = () => {
       };
       
       // Send POST request to backend
-      const response = await fetch('http://localhost:9000/api/appointments', {
+      const response = await fetch('http://localhost:9000/api/appointment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -117,7 +117,15 @@ const AppointmentPage = () => {
   };
   
   // Available time slots
-  const timeSlots = ['9:00 AM', '9:30 AM', '10:00 AM', '11:00 AM', '11:30 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'];
+  const timeSlots = [
+    '10:00 AM - 11:00 AM',
+    '11:00 AM - 12:00 PM',
+    '12:00 PM - 1:00 PM',
+    '1:00 PM - 2:00 PM',
+    '2:00 PM - 3:00 PM',
+    '3:00 PM - 4:00 PM',
+    '4:00 PM - 5:00 PM'
+  ];
   
   return (
     <div className="bg-gray-50 min-h-screen">
