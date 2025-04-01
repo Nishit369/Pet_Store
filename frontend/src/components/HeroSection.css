@@ -1,0 +1,16 @@
+.hero-button {
+  position: relative;
+  z-index: 10;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.hero-button:hover {
+  background-color: #0056b3;
+  cursor: pointer; /* Ensure pointer cursor on hover */
+}
