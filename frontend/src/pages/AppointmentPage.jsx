@@ -9,10 +9,8 @@ import { motion } from 'framer-motion';
 import { TextField } from '@mui/material';
 
 const AppointmentPage = () => {
-  const navigate = useNavigate(); 
-  const [hoveredSlot, setHoveredSlot] = useState(null);
-  const [hoveredDoctor, setHoveredDoctor] = useState(null);
-  const [doctor,setDoctor] = useState({})
+  const navigate = useNavigate();
+  const [doctor, setDoctor] = useState({});
   const { user } = useSelector((state) => state.auth);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [selectedTime, setSelectedTime] = useState('');
@@ -98,7 +96,7 @@ const AppointmentPage = () => {
       });
       
       const data = await response.json();
-      console.log(data)
+      
       if (!response.ok) {
         throw new Error(data.message || 'Failed to book appointment');
       }
@@ -119,85 +117,170 @@ const AppointmentPage = () => {
   };
   
   // Available time slots
-  const timeSlots = [ '10:00 - 11:00 AM', '11:00 - 11:59 AM', '12:00 - 1:00 PM', '1:00 - 2:00 PM', '2:00 - 3:00 PM', '3:00 - 4:00 PM', '4:00 - 5:00 PM'];
+  const timeSlots = ['9:00 AM', '9:30 AM', '10:00 AM', '11:00 AM', '11:30 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'];
   
   return (
-    <div style={styles.appointmentPage}>
-      <div style={{ ...styles.doctorDetails, ...styles.responsiveSection }}>
-        <div style={styles.doctorImage}>
-          <img src="https://img.freepik.com/free-photo/front-view-female-veterinarian-observing-little-dog-yellow-wall_179666-12493.jpg" alt="Doctor" style={{ width: "100%", height: "100%" }} />
-        </div>
-        <div style={styles.doctorInfo}>
-          <h1>
-            {doctor.name} <span style={styles.verifiedBadge}>✔</span>
-          </h1>
-          <p>
-            {doctor.qualification} <span>2 Years</span>
-          </p>
-          <p style={styles.about}>
-            {doctor.description}
-          
-          </p>
-          <p style={styles.appointmentFee}>
-            Appointment fee: <strong>${doctor.fees}</strong>
-          </p>
-        </div>
-      </div>
+    <div className="bg-gray-50 min-h-screen">
+      {isBookingConfirmed && (
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-5 left-0 right-0 mx-auto w-max z-50 bg-green-600 text-white py-3 px-6 rounded-lg shadow-lg"
+        >
+          <div className="flex items-center gap-2">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span className="font-semibold">Appointment booked successfully!</span>
+          </div>
+        </motion.div>
+      )}
+      
+      {error && (
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-5 left-0 right-0 mx-auto w-max z-50 bg-red-600 text-white py-3 px-6 rounded-lg shadow-lg"
+        >
+          <div className="flex items-center gap-2">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span className="font-semibold">{error}</span>
+            <button 
+              onClick={() => setError(null)} 
+              className="ml-2 text-white hover:text-gray-200"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        </motion.div>
+      )}
 
-      <div style={{ ...styles.bookingSlots, ...styles.responsiveSection }}>
-        <h2>Booking slots</h2>
-        <div style={styles.responsiveGrid}>
-          <button
-            style={{ ...styles.button, ...(hoveredSlot === "MON" ? styles.buttonHover : {}) }}
-            onMouseEnter={() => setHoveredSlot("MON")}
-            onMouseLeave={() => setHoveredSlot(null)}
-          >
-            MON<br />10
-          </button>
-          <button
-            style={{ ...styles.button, ...(hoveredSlot === "TUE" ? styles.buttonHover : {}) }}
-            onMouseEnter={() => setHoveredSlot("TUE")}
-            onMouseLeave={() => setHoveredSlot(null)}
-          >
-            TUE<br />11
-          </button>
-          <button
-            style={{ ...styles.button, ...(hoveredSlot === "WED" ? styles.buttonHover : {}) }}
-            onMouseEnter={() => setHoveredSlot("WED")}
-            onMouseLeave={() => setHoveredSlot(null)}
-          >
-            WED<br />12
-          </button>
-          <button
-            style={{ ...styles.button, ...(hoveredSlot === "THU" ? styles.buttonHover : {}) }}
-            onMouseEnter={() => setHoveredSlot("THU")}
-            onMouseLeave={() => setHoveredSlot(null)}
-          >
-            THU<br />13
-          </button>
-          <button
-            style={{ ...styles.button, ...(hoveredSlot === "FRI" ? styles.buttonHover : {}) }}
-            onMouseEnter={() => setHoveredSlot("FRI")}
-            onMouseLeave={() => setHoveredSlot(null)}
-          >
-            FRI<br />14
-          </button>
-          <button
-            style={{ ...styles.button, ...(hoveredSlot === "SAT" ? styles.buttonHover : {}) }}
-            onMouseEnter={() => setHoveredSlot("SAT")}
-            onMouseLeave={() => setHoveredSlot(null)}
-          >
-            SAT<br />15
-          </button>
-          <button
-            style={{ ...styles.button, ...(hoveredSlot === "SUN" ? styles.buttonHover : {}) }}
-            onMouseEnter={() => setHoveredSlot("SUN")}
-            onMouseLeave={() => setHoveredSlot(null)}
-          >
-            SUN<br />16
-          </button>
-        </div>
-        <div style={styles.responsiveGrid}>
+      <div className="max-w-6xl mx-auto py-8 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-xl shadow-md overflow-hidden mb-8"
+        >
+          <div className="md:flex">
+            <div className="md:flex-shrink-0 bg-gradient-to-r from-blue-500 to-purple-600 p-6 flex items-center justify-center">
+              {doctor.profileImage ? (
+                <img className="h-48 w-48 rounded-full border-4 border-white shadow-lg object-cover" src={doctor.profileImage} alt={doctor.name} />
+              ) : (
+                <div className="h-48 w-48 rounded-full border-4 border-white shadow-lg bg-gray-300 flex items-center justify-center">
+                  <span className="text-4xl text-white font-bold">{doctor.name ? doctor.name.charAt(0) : 'D'}</span>
+                </div>
+              )}
+            </div>
+            <div className="p-8 w-full">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="flex items-center">
+                    <h1 className="text-2xl font-bold text-gray-900">{doctor.name || 'Doctor'}</h1>
+                    <span className="ml-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-semibold">Verified</span>
+                  </div>
+                  <p className="text-gray-600 mt-2">{doctor.qualification || 'Specialist'} • {doctor.experience || '2'} Years Experience</p>
+                </div>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-blue-600">Consultation Fee</p>
+                  <p className="text-2xl font-bold text-blue-800">${doctor.fees || '50'}</p>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-gray-900">About</h3>
+                <p className="mt-2 text-gray-600">{doctor.description || 'A dedicated healthcare professional committed to providing the highest standard of patient care with a focus on preventative health and patient education.'}</p>
+              </div>
+              
+              <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500">Specialty</p>
+                  <p className="font-medium">{doctor.specialty || 'General Medicine'}</p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500">Languages</p>
+                  <p className="font-medium">{doctor.languages || 'English, Spanish'}</p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500">Rating</p>
+                  <div className="flex items-center">
+                    <span className="font-medium">{doctor.rating || '4.8'}</span>
+                    <svg className="w-4 h-4 text-yellow-500 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-500">Patients</p>
+                  <p className="font-medium">{doctor.patientCount || '1000'}+</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="bg-white rounded-xl shadow-md p-8 mb-8"
+        >
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Book Your Appointment</h2>
+          
+          <div className="mb-8">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Select Date</h3>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Appointment Date"
+                value={selectedDate}
+                onChange={(newDate) => setSelectedDate(newDate)}
+                renderInput={(params) => <TextField {...params} fullWidth />}
+                minDate={dayjs()}
+                maxDate={dayjs().add(30, 'day')}
+                disablePast
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: '#E5E7EB',
+                      borderRadius: '0.5rem',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#3B82F6',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#3B82F6',
+                    },
+                  },
+                  width: '100%',
+                  maxWidth: '400px'
+                }}
+              />
+            </LocalizationProvider>
+          </div>
+          
+          <div className="mb-8">
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Select Time</h3>
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+              {timeSlots.map((time, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedTime(time)}
+                  className={`py-3 px-4 rounded-lg transition-all duration-200 ${
+                    selectedTime === time
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                  } font-medium`}
+                >
+                  {time}
+                </button>
+              ))}
+            </div>
+          </div>
+          
           <button
             onClick={handleBookAppointment}
             disabled={isLoading || !selectedDate || !selectedTime}
