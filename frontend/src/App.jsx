@@ -28,6 +28,7 @@ import SchedulePage from "./pages/Schedule";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
+import AdminAppointment from "./components/Admin/AdminAppointment";
 
 const App = () => {
   return (
@@ -53,7 +54,7 @@ const App = () => {
           <Route path="collection-docs" element={<CollectionDocs />} />
         </Route>
         {/* Admin Routes - You can add an actual admin layout later */}
-        <Route path="/admin" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>} >
+        <Route path="/admin" element={<ProtectedRoute role={'admin'}><AdminLayout /></ProtectedRoute>} >
 
             <Route index element={<AdminHomePage />} />
             <Route path="users" element={<UserManagement />} />
@@ -61,6 +62,8 @@ const App = () => {
             <Route path="pets" element={<PetManagement />} />
             <Route path="products/:id/edit" element={<EditProductPage />} />
             <Route path="orders" element={<OrderMangement />} />
+            <Route path="appointment" element={<AdminAppointment />} />
+
         </Route>
 
         {/* Admin Routes - You can add an actual admin layout later */}

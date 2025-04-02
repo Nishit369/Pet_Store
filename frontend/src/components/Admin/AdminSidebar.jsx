@@ -4,7 +4,8 @@ import {
   FaSignOutAlt,
   FaStore,
   FaUser,
-  FaDog
+  FaDog,
+  FaCalendarAlt
 } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -64,6 +65,17 @@ const AdminSidebar = () => {
           <span>Pets</span>
         </NavLink>
         <NavLink
+          to="/admin/appointment"
+          className={({ isActive }) =>
+            isActive
+              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
+              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+          }
+        >
+       <FaCalendarAlt />
+          <span>Appointment</span>
+        </NavLink>
+        <NavLink
           to="/admin/orders"
           className={({ isActive }) =>
             isActive
@@ -74,8 +86,9 @@ const AdminSidebar = () => {
           <FaClipboardList />
           <span>Orders</span>
         </NavLink>
+     
         <NavLink
-          to="/"
+          to="/admin/orders"
           className={({ isActive }) =>
             isActive
               ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
@@ -91,6 +104,7 @@ const AdminSidebar = () => {
           onClick={handleLogout}
           className="w-full bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded flex items-center justify-center space-x-2"
         >
+          
           <FaSignOutAlt />
           <span>Logout</span>
         </button>

@@ -18,6 +18,7 @@ const AppointmentPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   
+  
   // Dummy data for related doctors
   const relatedDoctors = [
     {
@@ -77,10 +78,10 @@ const AppointmentPage = () => {
     try {
       // Appointment data to be sent to the backend
       const appointmentData = {
-        doctorId: id,
-        userId: user?.id,
-        appointmentDate: selectedDate.format('YYYY-MM-DD'),
-        appointmentTime: selectedTime,
+        doctor_id: id,
+        user_id: user?.id,
+        date: selectedDate.format('YYYY-MM-DD'),
+        time: selectedTime,
         status: 'scheduled'
       };
       

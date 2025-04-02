@@ -1,11 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import AdminSidebar from "./AdminSidebar";
 import { Outlet } from "react-router-dom";
+import {  useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const AdminLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const { user } = useSelector((state) => state.auth);
+    const navigate = useNavigate();
+  
+    useEffect(() => {
+      if (user && user.role !== "admin") {
+        navigate("/");
+      }
+    }, [user, navigate]);
 
     const toggleSidebar = () => {
       setIsSidebarOpen(!isSidebarOpen);
