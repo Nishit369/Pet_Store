@@ -171,13 +171,28 @@ const AppointmentsList = () => {
   }, []);
 
   // Update appointment status handler
-  const handleUpdateStatus = (appointmentId, newStatus) => {
-    setAppointments(appointments.map(app => 
-      app._id === appointmentId ? {...app, status: newStatus} : app
-    ));
-    // Here you would also make an API call to update the appointment status in the database
-    console.log(`Appointment ${appointmentId} status updated to ${newStatus}`);
-  };
+  const handleUpdateStatus = async (appointmentId, newStatus) => {
+   try{
+    const response = await fetch(`http://localhost:9000/api/appointment/${appointmentId}`,{
+        method: 'PUT',
+        headers: {
+            'Content-Type' : 'application/json',
+        },
+        body:JSON.stringify({status: newStatus}),
+});
+if (!response.ok) {
+    throw new Error('Failed to update appointment status');
+  }
+
+  const data = await response.json();
+  console.log(data.message);
+  setAppointments(appointments.map(app =>
+    app._id === appointmentId ? { ...app, status: newStatus } : app
+  ));
+} catch (error) {
+  console.error('Error updating status:', error.message);
+}
+};
 
   return (
     <div className="container mx-auto px-4 py-8">

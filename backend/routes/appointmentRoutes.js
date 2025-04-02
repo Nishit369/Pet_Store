@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { user_id, date, time, status, reason, doctor_id } = req.body;
-    console.log("Received appointment data:", req.body);
+    // console.log("Received appointment data:", req.body);
     const appointment = new Appointment({
       user_id,
       date,
