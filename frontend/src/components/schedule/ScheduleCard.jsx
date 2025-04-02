@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaCalendarAlt, FaClock, FaUserMd, FaCheckCircle, FaTimesCircle, FaExclamationCircle, FaStethoscope, FaTrashAlt } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 export default function ScheduleCard({ appointment, onDelete }) {
   const appointmentData = Array.isArray(appointment) ? appointment[0] : appointment;
@@ -40,11 +41,17 @@ export default function ScheduleCard({ appointment, onDelete }) {
           text: 'Confirmed',
           color: 'bg-green-100 text-green-800'
         };
-      case 'cancelled':
+      case 'rejected':
         return { 
           icon: <FaTimesCircle className="h-5 w-5 text-red-500" />,
-          text: 'Cancelled',
+          text: 'Rejected',
           color: 'bg-red-100 text-red-800'
+        };
+      case 'completed':
+        return { 
+          icon: <FaCheckCircle className="h-5 w-5 text-purple-500" />,
+          text: 'Completed',
+          color: 'bg-purple-100 text-purple-800'
         };
       default:
         return { 
@@ -65,10 +72,37 @@ export default function ScheduleCard({ appointment, onDelete }) {
         });
         if (response.ok) {
           onDelete(_id);
+          toast.success('Appointment successfully deleted!', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
         } else {
+          toast.error('Failed to delete appointment', {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
           console.error('Failed to delete appointment');
         }
       } catch (error) {
+        toast.error('Error deleting appointment: ' + error.message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
         console.error('Error deleting appointment:', error);
       }
     }
@@ -77,7 +111,7 @@ export default function ScheduleCard({ appointment, onDelete }) {
   return (
     <div className="max-w-md rounded-xl overflow-hidden shadow-lg bg-white border border-gray-100">
       {/* Top color bar - different color based on status */}
-      <div className={`h-2 ${status.toLowerCase() === 'confirmed' ? 'bg-green-500' : status.toLowerCase() === 'cancelled' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
+      <div className={`h-2 ${status.toLowerCase() === 'confirmed' ? 'bg-green-500' : status.toLowerCase() === 'rejected' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
       
       <div className="p-6">
         {/* Status badge */}

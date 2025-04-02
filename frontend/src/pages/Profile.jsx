@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { logout } from "../redux/slices/authSlice";
 import { clearCart } from "../redux/slices/cartSlice";
-import { FaSignOutAlt, FaCalendarCheck } from "react-icons/fa";
+import { FaSignOutAlt, FaCalendarCheck, FaShoppingBag } from "react-icons/fa";
 
 const Profile = () => {
   const { user } = useSelector((state) => state.auth);
@@ -27,6 +27,10 @@ const Profile = () => {
     navigate("/schedule");
   };
   
+  const handleOrders = () => {
+    navigate("/profile");
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-grow container mx-auto p-4 md:p-6">
@@ -39,22 +43,22 @@ const Profile = () => {
             <p className="text-lg text-gray-600 mb-4">{user?.email}</p>
             <div className="space-y-2">
               <button
-                onClick={handleLogout}
-                className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 flex items-center justify-center"
-              >
-                <FaSignOutAlt className="mr-2" /> Logout
-              </button>
-              <button
                 onClick={handleAppointments}
                 className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 flex items-center justify-center"
               >
                 <FaCalendarCheck className="mr-2" /> My Appointments
               </button>
               <button
-                onClick={handleAppointments}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 flex items-center justify-center"
+                onClick={handleOrders}
+                className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 flex items-center justify-center"
               >
-                <FaCalendarCheck className="mr-2" /> My Orders
+                <FaShoppingBag className="mr-2" /> My Orders
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 flex items-center justify-center mt-4"
+              >
+                <FaSignOutAlt className="mr-2" /> Logout
               </button>
             </div>
           </div>
