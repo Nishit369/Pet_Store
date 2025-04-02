@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css"
 
 // Component for displaying and managing a single appointment
 const AdminAppointment = ({ appointment, onUpdateStatus }) => {
@@ -23,29 +25,36 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
 
   // Handle status updates
   const handleStatusUpdate = (newStatus) => {
+    toast.success(`Appointment ${newStatus} successfully!`);
     onUpdateStatus(appointment._id, newStatus);
   };
+  
 
   // Determine which action buttons to show based on current status
   const renderActionButtons = () => {
     switch(appointment.status.toLowerCase()) {
       case 'confirmed':
         return (
-          <button 
+          <>
+           <button 
             onClick={() => handleStatusUpdate('completed')}
             className="px-3 py-1.5 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm"
           >
             Complete
           </button>
+         
+          
+          </>
+         
         );
       case 'completed':
       case 'rejected':
-        return null; // No actions for completed or rejected appointments
+        return  null; // No actions for completed or rejected appointments
       default: // For pending, scheduled, or any other status
         return (
           <>
             <button 
-              onClick={() => handleStatusUpdate('confirmed')}
+              onClick={() => handleStatusUpdate('confirmed') }
               className="px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
             >
               Confirm
@@ -64,6 +73,7 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
       {/* Card Header */}
+      
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h3 className="font-bold text-lg text-gray-800">
@@ -77,7 +87,7 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
           Created: {new Date(appointment.createdAt).toLocaleString()}
         </p>
       </div>
-      
+        {/* <ToastContainer /> */}
       {/* Card Body */}
       <div className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -196,7 +206,9 @@ if (!response.ok) {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex justify-between items-center mb-6">
+        
         <h1 className="text-2xl font-bold text-gray-800">Appointment Management</h1>
       </div>
       
