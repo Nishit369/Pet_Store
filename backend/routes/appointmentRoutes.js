@@ -44,7 +44,7 @@ router.get("/all", async (req, res) => {
   try {
     const allAppointments = await Appointment.find()
       .populate("user_id")
-      .populate("doctor_id");
+      .populate("doctor_id").sort({createdAt: -1});
     res.json(allAppointments);
   } catch (err) {
     res
