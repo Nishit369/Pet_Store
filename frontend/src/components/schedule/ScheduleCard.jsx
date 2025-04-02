@@ -1,21 +1,29 @@
 import React from 'react';
-import { FaCalendarAlt, FaClock, FaUserMd, FaCheckCircle, FaTimesCircle, FaExclamationCircle, FaStethoscope } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaUserMd, FaCheckCircle, FaTimesCircle, FaExclamationCircle, FaStethoscope, FaTrashAlt } from 'react-icons/fa';
 
-export default function ScheduleCard({ appointment }) {
-  // Destructure appointment data (assuming these props are passed)
-  const { doctor, date, time, status, reason } = appointment || {
-    doctor: { 
-      name: "Dr. Sarah Johnson", 
-      qualification: "MD, Cardiology",
-      fees: 150
-    },
-    date: new Date("2025-04-15"),
-    time: "10:30 AM",
-    status: "confirmed", 
-    reason: "Annual heart checkup"
+export default function ScheduleCard({ appointment, onDelete }) {
+  const appointmentData = Array.isArray(appointment) ? appointment[0] : appointment;
+  
+  const { 
+    _id, 
+    date, 
+    time, 
+    status, 
+    reason,
+    doctor_id: doctor 
+  } = appointmentData || {
+    _id: "temp-id",
+    date: new Date("2025-04-05"),
+    time: "10:00 AM",
+    status: "confirmed",
+    reason: "Routine Checkup",
+    doctor_id: {
+      name: "Dr. Michael Brown",
+      qualification: "MBBS, MS",
+      fees: 180
+    }
   };
   
-  // Format date
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     year: 'numeric',
@@ -48,6 +56,23 @@ export default function ScheduleCard({ appointment }) {
   };
   
   const statusInfo = getStatusInfo();
+  
+  const handleDelete = async () => {
+    if (_id) {
+      try {
+        const response = await fetch(`http://localhost:9000/api/appointment/${_id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          onDelete(_id);
+        } else {
+          console.error('Failed to delete appointment');
+        }
+      } catch (error) {
+        console.error('Error deleting appointment:', error);
+      }
+    }
+  };
   
   return (
     <div className="max-w-md rounded-xl overflow-hidden shadow-lg bg-white border border-gray-100">
@@ -107,16 +132,15 @@ export default function ScheduleCard({ appointment }) {
         </div>
       </div>
       
-      {/* Bottom actions */}
-      <div className="px-6 py-4 bg-gray-50 flex justify-between items-center">
-        <button className="px-4 py-2 bg-white text-gray-700 text-sm font-medium rounded-md border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-          Reschedule
+      {/* Bottom action - single Delete button */}
+      <div className="px-6 py-4 bg-gray-50 flex justify-center items-center">
+        <button 
+          onClick={handleDelete}
+          className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-md flex items-center hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        >
+          <FaTrashAlt className="h-4 w-4 mr-2" />
+          Delete Appointment
         </button>
-        {status.toLowerCase() !== 'cancelled' && (
-          <button className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-            {status.toLowerCase() === 'confirmed' ? 'View Details' : 'Confirm'}
-          </button>
-        )}
       </div>
     </div>
   );

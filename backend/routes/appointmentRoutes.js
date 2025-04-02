@@ -35,13 +35,12 @@ router.get("/", async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ error: "Failed to fetch doctors", details: err.message });
+      .json({ error: "Failed to fetch appointments", details: err.message });
   }
 });
 
 router.get("/all", async (req, res) => {
   try {
-    const { id } = req.query;
     const allAppointments = await Appointment.find()
       .populate("user_id")
       .populate("doctor_id");
@@ -49,7 +48,44 @@ router.get("/all", async (req, res) => {
   } catch (err) {
     res
       .status(500)
-      .json({ error: "Failed to fetch doctors", details: err.message });
+      .json({ error: "Failed to fetch appointments", details: err.message });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedAppointment = await Appointment.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedAppointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    res.json({
+      message: "Appointment updated successfully",
+      updatedAppointment,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error updating appointment", error: error.message });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedAppointment = await Appointment.findByIdAndDelete(id);
+    if (!deletedAppointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    res.json({ message: "Appointment deleted successfully" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error deleting appointment", error: error.message });
   }
 });
 
