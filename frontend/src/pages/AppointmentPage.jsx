@@ -17,6 +17,8 @@ const AppointmentPage = () => {
   const [isBookingConfirmed, setIsBookingConfirmed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [reason, setReason] = useState('');
+
   
   
   // Dummy data for related doctors
@@ -79,10 +81,11 @@ const AppointmentPage = () => {
       // Appointment data to be sent to the backend
       const appointmentData = {
         doctor_id: id,
-        user_id: user?.id,
+        user_id: user._id,
         date: selectedDate.format('YYYY-MM-DD'),
         time: selectedTime,
-        status: 'scheduled'
+        status: 'scheduled',
+        reason: reason,
       };
       
       // Send POST request to backend
@@ -289,6 +292,17 @@ const AppointmentPage = () => {
               ))}
             </div>
           </div>
+
+          <div className="mb-8">
+  <h3 className="text-lg font-medium text-gray-900 mb-4">Give Reason</h3>
+  <input 
+    type="text" 
+    placeholder="Enter your reason..." 
+    className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" 
+    value={reason}
+    onChange={(e) => setReason(e.target.value)}
+  />
+</div>
           
           <button
             onClick={handleBookAppointment}

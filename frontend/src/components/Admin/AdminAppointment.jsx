@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Component for displaying and managing a single appointment
 const AdminAppointment = ({ appointment, onUpdateStatus }) => {
@@ -67,7 +67,7 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h3 className="font-bold text-lg text-gray-800">
-            Appointment {appointment._id.substring(0, 8)}...
+            Appointment for {appointment.doctor_id.name}
           </h3>
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status.toLowerCase()] || 'bg-gray-100 text-gray-800'}`}>
             {appointment.status}
@@ -86,11 +86,11 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
               <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</h4>
               <div className="flex items-center mt-1">
                 <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                  {appointment.user?.name ? appointment.user.name.charAt(0) : 'U'}
+                  {appointment.user_id.name ? appointment.user_id.name.charAt(0) : 'U'}
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-800">{appointment.user?.name || 'Patient Name'}</p>
-                  <p className="text-xs text-gray-500">ID: {appointment.user_id.substring(0, 10)}...</p>
+                  <p className="text-sm font-medium text-gray-800">{appointment.user_id.name || 'Patient Name'}</p>
+                  <p className="text-xs text-gray-500">Email ID: {appointment.user_id.email}</p>
                 </div>
               </div>
             </div>
@@ -99,11 +99,12 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
               <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</h4>
               <div className="flex items-center mt-1">
                 <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">
-                  {appointment.doctor?.name ? appointment.doctor.name.charAt(0) : 'D'}
+                  {appointment.doctor_id.name ? appointment.doctor_id.name.charAt(0) : 'D'}
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-800">{appointment.doctor?.name || 'Dr. Smith'}</p>
-                  <p className="text-xs text-gray-500">ID: {appointment.doctor_id.substring(0, 10)}...</p>
+                  <p className="text-sm font-medium text-gray-800">{appointment.doctor_id?.name || 'Dr. Smith'}</p>
+                  <p className="text-xs text-gray-500">Qualification: {appointment.doctor_id.qualification}</p>
+                  <p className="text-xs text-gray-500">Description: {appointment.doctor_id.description}</p>
                 </div>
               </div>
             </div>
@@ -149,47 +150,25 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
 // Main component that renders a list of appointments
 const AppointmentsList = () => {
   // Sample dummy data
-  const [appointments, setAppointments] = React.useState([
-    {
-      _id: "60d21b4667d0d8992e610c85",
-      user_id: "60d21b4667d0d8992e610c80",
-      doctor_id: "60d21b4667d0d8992e610c81",
-      date: "2025-04-15T00:00:00.000Z",
-      time: "10:30",
-      reason: "Annual checkup and blood work",
-      status: "scheduled",
-      createdAt: "2025-03-30T12:34:56.789Z",
-      updatedAt: "2025-03-30T12:34:56.789Z",
-      user: { name: "John Doe" },
-      doctor: { name: "Dr. Sarah Johnson" }
-    },
-    {
-      _id: "60d21b4667d0d8992e610c86",
-      user_id: "60d21b4667d0d8992e610c82",
-      doctor_id: "60d21b4667d0d8992e610c83",
-      date: "2025-04-10T00:00:00.000Z",
-      time: "14:15",
-      reason: "Persistent headache and dizziness for past week",
-      status: "scheduled",
-      createdAt: "2025-03-28T09:15:22.345Z",
-      updatedAt: "2025-03-28T09:15:22.345Z",
-      user: { name: "Emily Wilson" },
-      doctor: { name: "Dr. Michael Chen" }
-    },
-    {
-      _id: "60d21b4667d0d8992e610c87",
-      user_id: "60d21b4667d0d8992e610c84",
-      doctor_id: "60d21b4667d0d8992e610c81",
-      date: "2025-04-03T00:00:00.000Z",
-      time: "09:00",
-      reason: "Follow-up appointment for recent surgery",
-      status: "scheduled",
-      createdAt: "2025-03-25T16:48:37.123Z",
-      updatedAt: "2025-04-03T10:15:00.000Z",
-      user: { name: "Robert Smith" },
-      doctor: { name: "Dr. Sarah Johnson" }
-    }
-  ]);
+  const [appointments, setAppointments] = useState([]);
+
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const response = await fetch('http://localhost:9000/api/appointment/all');
+        if (!response.ok) {
+          throw new Error('Failed to fetch appointments');
+        }
+        const data = await response.json();
+        console.log(data);
+        setAppointments(data);
+      } catch (error) {
+        console.error('Error:', error.message);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
 
   // Update appointment status handler
   const handleUpdateStatus = (appointmentId, newStatus) => {
