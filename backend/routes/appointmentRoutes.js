@@ -25,10 +25,31 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
   try {
-  } catch (e) {
-    console.log(e);
+    const { id } = req.query;
+    const allAppointments = await Appointment.find({ user_id: id })
+      .populate("user_id")
+      .populate("doctor_id");
+    res.json(allAppointments);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch doctors", details: err.message });
+  }
+});
+
+router.get("/all", async (req, res) => {
+  try {
+    const { id } = req.query;
+    const allAppointments = await Appointment.find()
+      .populate("user_id")
+      .populate("doctor_id");
+    res.json(allAppointments);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch doctors", details: err.message });
   }
 });
 

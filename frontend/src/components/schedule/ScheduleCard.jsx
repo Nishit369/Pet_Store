@@ -11,7 +11,7 @@ export default function ScheduleCard({ appointment }) {
     },
     date: new Date("2025-04-15"),
     time: "10:30 AM",
-    status: "confirmed", // confirmed, cancelled, pending
+    status: "confirmed", 
     reason: "Annual heart checkup"
   };
   
