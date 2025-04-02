@@ -5,8 +5,15 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const { user_id, date, doctor_id } = req.body;
-    const appointment = new Appointment({ user_id, date, doctor_id });
+    const { user_id, date, time, status, reason, doctor_id } = req.body;
+    const appointment = new Appointment({
+      user_id,
+      date,
+      time,
+      status,
+      reason,
+      doctor_id,
+    });
     await appointment.save();
     res
       .status(201)
@@ -15,6 +22,13 @@ router.post("/", async (req, res) => {
     res
       .status(500)
       .json({ message: "Error creating appointment", error: error.message });
+  }
+});
+
+router.get("/", (req, res) => {
+  try {
+  } catch (e) {
+    console.log(e);
   }
 });
 
