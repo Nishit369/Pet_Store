@@ -23,6 +23,8 @@ import DocHomePage from "./pages/DocHomePage";
 import AppointmentPage from "./pages/AppointmentPage";
 import CollectionDocs from "./pages/CollectionDocs";
 import SchedulePage from "./pages/Schedule";
+import DoctorLayout from "./components/Layout/DoctorLayout";
+import DoctorAppointmentPage from "./components/Doctor/DoctorAppointmentPage";
 
 
 import { Provider } from "react-redux";
@@ -72,9 +74,11 @@ const App = () => {
         
 
         {/* Doctor Routes */}
-        <Route path="/doctor">{/* Doctor Layout Here */}
-
+        <Route path="/doctor" element={<ProtectedRoute role={'doctor'}><DoctorLayout /></ProtectedRoute>} >
+            <Route index element={<DoctorAppointmentPage />} />
         </Route>
+
+
       </Routes>
     </BrowserRouter>
     </Provider>

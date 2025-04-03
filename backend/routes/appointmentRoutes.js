@@ -28,11 +28,26 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const { id } = req.query;
-    const allAppointments = await Appointment.find({ user_id: id })
+    const { user_id, doctor_id } = req.query;
+
+    if (!user_id && !doctor_id) {
+      return res
+        .status(400)
+        .json({ error: "Provide either user_id or doctor_id" });
+    }
+    if (user_id && doctor_id) {
+      return res
+        .status(400)
+        .json({ error: "Provide only one of user_id or doctor_id" });
+    }
+
+    const filter = user_id ? { user_id } : { doctor_id };
+
+    const appointments = await Appointment.find(filter)
       .populate("user_id")
       .populate("doctor_id");
-    res.json(allAppointments);
+
+    res.json(appointments);
   } catch (err) {
     res
       .status(500)
@@ -44,7 +59,8 @@ router.get("/all", async (req, res) => {
   try {
     const allAppointments = await Appointment.find()
       .populate("user_id")
-      .populate("doctor_id").sort({createdAt: -1});
+      .populate("doctor_id")
+      .sort({ createdAt: -1 });
     res.json(allAppointments);
   } catch (err) {
     res
