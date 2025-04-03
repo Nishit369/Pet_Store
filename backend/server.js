@@ -10,7 +10,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
-const petRoutes = require('./routes/petRoutes');
+const petRoutes = require("./routes/petRoutes");
 
 const adminRoutes = require("./routes/adminRoutes");
 const productAdminRoutes = require("./routes/productAdminRoutes");
@@ -43,8 +43,6 @@ app.use("/api/checkout", checkoutRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/pets", petRoutes);
-
-
 
 // Admin
 app.use("/api/admin/users", adminRoutes);

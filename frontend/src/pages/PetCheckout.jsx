@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Link } from 'react-router-dom';
 
 function PetCheckout() {
   const { productId } = useParams();
@@ -115,7 +116,7 @@ function PetCheckout() {
             {/* Checkout Form */}
             <form className="space-y-4" onSubmit={handleCheckout}>
               {/* You could add payment method options or other fields here */}
-              
+             <Link to={`/pet/checkout/${productId}`}>
               <button 
                 type="submit"
                 disabled={isProcessing}
@@ -127,6 +128,7 @@ function PetCheckout() {
               >
                 {isProcessing ? "Processing..." : "Complete Purchase"}
               </button>
+             </Link> 
             </form>
           </div>
         </div>

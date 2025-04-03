@@ -25,6 +25,8 @@ import CollectionDocs from "./pages/CollectionDocs";
 import SchedulePage from "./pages/Schedule";
 import DoctorLayout from "./components/Layout/DoctorLayout";
 import DoctorAppointmentPage from "./components/Doctor/DoctorAppointmentPage";
+import PetPayment from "./components/Cart/PetPayment";
+
 
 
 import { Provider } from "react-redux";
@@ -32,7 +34,6 @@ import store from "./redux/store";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import AdminAppointment from "./components/Admin/AdminAppointment";
 import PetCheckout from "./pages/PetCheckout";
-import PurchaseSuccess from "./pages/PurchaseSuccess";
 
 const App = () => {
   return (
@@ -57,7 +58,7 @@ const App = () => {
           <Route path="appointment/:id" element={<AppointmentPage />} />
           <Route path="collection-docs" element={<CollectionDocs />} />
           <Route path="/pets/:productId" element={<PetCheckout />} />
-          <Route path="/purchase-success" element={<PurchaseSuccess />} />
+          <Route path="/pet/checkout/:id" element={<PetPayment />} />
         </Route>
         {/* Admin Routes - You can add an actual admin layout later */}
         <Route path="/admin" element={<ProtectedRoute role={'admin'}><AdminLayout /></ProtectedRoute>} >
@@ -72,7 +73,6 @@ const App = () => {
 
         </Route>
 
-        {/* Admin Routes - You can add an actual admin layout later */}
         
 
         

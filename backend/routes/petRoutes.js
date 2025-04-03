@@ -148,8 +148,6 @@ router.get("/available/new", async (req, res) => {
   }
 });
 
-
-
 // @route POST /api/pets/purchase
 // @desc Purchase a pet
 // @access Private
@@ -171,7 +169,7 @@ router.post("/purchase", protect, async (req, res) => {
     // 3. Create order record
     const order = new Order({
       pet: petId,
-      buyer: req.user._id,  // Get the buyer ID from the authenticated user
+      buyer: req.user._id, // Get the buyer ID from the authenticated user
       purchaseDate: new Date(),
       price: pet.price,
       // Add other order details if needed
