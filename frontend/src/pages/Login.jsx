@@ -84,6 +84,15 @@ const Login = () => {
               Register
             </Link>
           </p>
+          <p className="mt-6 text-center text-sm">
+            Register as {" "}
+            <Link
+              to={`/doctor-register`}
+              className="text-blue-500"
+            >
+              Doctor
+            </Link>
+          </p>
         </form>
       </div>
 

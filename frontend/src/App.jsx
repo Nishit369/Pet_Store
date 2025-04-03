@@ -26,6 +26,7 @@ import SchedulePage from "./pages/Schedule";
 import DoctorLayout from "./components/Layout/DoctorLayout";
 import DoctorAppointmentPage from "./components/Doctor/DoctorAppointmentPage";
 import PetPayment from "./components/Cart/PetPayment";
+import DoctorRegister from "./pages/DoctorRegister";
 
 
 
@@ -59,6 +60,7 @@ const App = () => {
           <Route path="collection-docs" element={<CollectionDocs />} />
           <Route path="/pets/:productId" element={<PetCheckout />} />
           <Route path="/pet/checkout/:id" element={<PetPayment />} />
+          <Route path="/doctor-register" element={<DoctorRegister />} />
         </Route>
         {/* Admin Routes - You can add an actual admin layout later */}
         <Route path="/admin" element={<ProtectedRoute role={'admin'}><AdminLayout /></ProtectedRoute>} >
