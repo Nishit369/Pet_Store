@@ -23,7 +23,7 @@ export default function SchedulePage() {
     }, [user, navigate]);
     
     const fetchAppointments = () => {
-      fetch(`http://localhost:9000/api/appointment?id=${user._id}`)
+      fetch(`http://localhost:9000/api/appointment?user_id=${user._id}`)
         .then(response => response.json())
         .then(data => setAppointments(data))
         .catch(error => console.error("Error fetching appointments:", error));

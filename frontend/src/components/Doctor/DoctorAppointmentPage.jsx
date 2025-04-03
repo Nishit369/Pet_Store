@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch, useSelector } from "react-redux";
 
 // Component for displaying and managing a single appointment
 const DoctorAppointment = ({ appointment, onUpdateStatus }) => {
@@ -153,14 +154,15 @@ const DoctorAppointmentsList = () => {
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const { user } = useSelector((state) => state.auth);
+  console.log(user)
   useEffect(() => {
     const fetchDoctorAppointments = async () => {
       setIsLoading(true);
-      const doctorId = "67ebd9c384128195ab01d819"
+      const doctorId = user._id
       try {
     
-              const response = await fetch(`http://localhost:9000/api/appointment?doctor_id=${doctorId}`);
+              const response = await fetch(`http://localhost:9000/api/appointment/doc/${doctorId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch appointments');
         }

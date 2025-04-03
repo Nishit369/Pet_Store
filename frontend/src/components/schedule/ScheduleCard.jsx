@@ -24,13 +24,13 @@ export default function ScheduleCard({ appointment, onDelete }) {
       fees: 180
     }
   };
-  
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   }).format(new Date(date));
+  console.log(doctor)
   
   // Status styling
   const getStatusInfo = () => {
@@ -130,7 +130,7 @@ export default function ScheduleCard({ appointment, onDelete }) {
           </div>
           <div className="ml-4">
             <p className="text-sm text-gray-500">Doctor</p>
-            <p className="text-md font-medium text-gray-800">{doctor.name}</p>
+            <p className="text-md font-medium text-gray-800">{doctor.user_id.name}</p>
             <p className="text-sm text-gray-600">{doctor.qualification}</p>
             <p className="text-sm font-medium text-gray-700 mt-1">${doctor.fees}</p>
           </div>

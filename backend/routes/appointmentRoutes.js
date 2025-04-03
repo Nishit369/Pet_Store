@@ -1,5 +1,6 @@
 const express = require("express");
 const Appointment = require("../models/Appointment");
+const Doctor = require("../models/Doctor");
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.get("/", async (req, res) => {
 
     const appointments = await Appointment.find(filter)
       .populate("user_id")
-      .populate("doctor_id");
+      .populate({ path: "doctor_id", populate: "user_id" });
 
     res.json(appointments);
   } catch (err) {
@@ -59,7 +60,7 @@ router.get("/all", async (req, res) => {
   try {
     const allAppointments = await Appointment.find()
       .populate("user_id")
-      .populate("doctor_id")
+      .populate({ path: "doctor_id", populate: "user_id" })
       .sort({ createdAt: -1 });
     res.json(allAppointments);
   } catch (err) {
@@ -103,6 +104,27 @@ router.delete("/:id", async (req, res) => {
     res
       .status(500)
       .json({ message: "Error deleting appointment", error: error.message });
+  }
+});
+
+router.get("/doc/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const doctor = await Doctor.findOne({ user_id: id });
+    if (!doctor) {
+      return res.status(404).json({ error: "Doctor not found" });
+    }
+
+    const appointments = await Appointment.find({ doctor_id: doctor._id })
+      .populate("user_id")
+      .populate({ path: "doctor_id", populate: "user_id" });
+
+    res.json(appointments);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch appointments", details: err.message });
   }
 });
 

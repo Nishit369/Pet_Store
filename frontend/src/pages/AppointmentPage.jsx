@@ -56,6 +56,7 @@ const AppointmentPage = () => {
       try {
         const response = await fetch(`http://localhost:9000/api/doctor/${id}`);
         const data = await response.json();
+        console.log("doctor id",data)
         setDoctor(data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -87,6 +88,7 @@ const AppointmentPage = () => {
         status: 'scheduled',
         reason: reason,
       };
+      
       
       // Send POST request to backend
       const response = await fetch('http://localhost:9000/api/appointment', {
