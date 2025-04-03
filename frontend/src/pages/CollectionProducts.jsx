@@ -11,6 +11,7 @@ const CollectionProducts = () => {
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
+  
   const queryParams = Object.fromEntries([...searchParams]);
 
   const sidebarRef = useRef(null);
@@ -52,7 +53,6 @@ const CollectionProducts = () => {
 
       {/* Filter Sidebar */}
       <div
-        ref={sidebarRef}
         className={`${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } fixed inset-y-0 z-50 left-0 w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}

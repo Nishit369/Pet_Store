@@ -6,26 +6,25 @@ export const fetchProductsByFilters = createAsyncThunk(
   "products/fetchByFilters",
   async ({
     collection,
-    
-    
+
     minPrice,
     maxPrice,
     sortBy,
     search,
     animal,
-    
+
     brand,
     limit,
   }) => {
     const query = new URLSearchParams();
     if (collection) query.append("collection", collection);
-    
+
     if (minPrice) query.append("minPrice", minPrice);
     if (maxPrice) query.append("maxPrice", maxPrice);
     if (sortBy) query.append("sortBy", sortBy);
     if (search) query.append("search", search);
-    if (animal) query.append("category", animal);
-  
+    if (animal) query.append("animal", animal);
+
     if (brand) query.append("brand", brand);
     if (limit) query.append("limit", limit);
 
@@ -84,7 +83,7 @@ const productsSlice = createSlice({
     loading: false,
     error: null,
     filters: {
-      animal:"",
+      animal: "",
       brand: "",
       minPrice: "",
       maxPrice: "",
@@ -100,14 +99,14 @@ const productsSlice = createSlice({
     },
     clearFilters: (state) => {
       state.filters = {
-        animal:"",
-      brand: "",
-      minPrice: "",
-      maxPrice: "",
-      sortBy: "",
-      search: "",
-      material: "",
-      collection: "",
+        animal: "",
+        brand: "",
+        minPrice: "",
+        maxPrice: "",
+        sortBy: "",
+        search: "",
+        material: "",
+        collection: "",
       };
     },
   },

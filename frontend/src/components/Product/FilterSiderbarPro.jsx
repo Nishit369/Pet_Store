@@ -64,7 +64,9 @@ const FilterSidebarPro = () => {
   
   const handleFilterChange = (e) => {
     const { name, value, checked, type } = e.target;
+    console.log({ name, value, checked, type })
     let newFilters = { ...filters };
+    console.log("this is new filter",newFilters)
 
     if (type === "checkbox") {
       if (checked) {
@@ -82,33 +84,32 @@ const FilterSidebarPro = () => {
   const updateURLParams = (newFilters) => {
     const params = new URLSearchParams(searchParams);
   
-    // Clear existing filter parameters
     params.delete("animal");
     params.delete("brand");
     params.delete("minPrice");
     params.delete("maxPrice");
-    
-    // Add animal filter if selected
+  
     if (newFilters.animal) {
       params.set("animal", newFilters.animal);
     }
-    
-    // Add brand filters if any are selected
+  
     if (newFilters.brand && newFilters.brand.length > 0) {
       params.set("brand", newFilters.brand.join(","));
     }
-    
-    // Add price range filters
+  
     if (newFilters.minPrice) {
       params.set("minPrice", newFilters.minPrice);
     }
-    
+  
     if (newFilters.maxPrice) {
       params.set("maxPrice", newFilters.maxPrice);
     }
-    
+  
+    console.log("Updated Search Params:", params.toString()); // 🛠 Debugging line
+  
     setSearchParams(params);
   };
+  
 
   const handlePriceChange = (e) => {
     const newPrice = Number(e.target.value); // Ensure it's a number
