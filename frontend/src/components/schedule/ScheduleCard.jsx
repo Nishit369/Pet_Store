@@ -111,7 +111,12 @@ export default function ScheduleCard({ appointment, onDelete }) {
   return (
     <div className="max-w-md rounded-xl overflow-hidden shadow-lg bg-white border border-gray-100">
       {/* Top color bar - different color based on status */}
-      <div className={`h-2 ${status.toLowerCase() === 'confirmed' ? 'bg-green-500' : status.toLowerCase() === 'rejected' ? 'bg-red-500' : 'bg-yellow-500'}`}></div>
+      <div className={`h-2 ${
+  status.toLowerCase() === 'confirmed' ? 'bg-green-500' : 
+  status.toLowerCase() === 'rejected' ? 'bg-red-500' : 
+  status.toLowerCase() === 'completed' ? 'bg-purple-500' : 
+  'bg-yellow-500'
+}`}></div>
       
       <div className="p-6">
         {/* Status badge */}
