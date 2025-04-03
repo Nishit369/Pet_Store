@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const FilterSidebar = () => {
-    
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
     animal: "",
@@ -18,84 +17,112 @@ const FilterSidebar = () => {
   const [priceRange, setPriceRange] = useState([0, 10000]);
 
   const animals = [
-    "Dogs",
-    "Cats",
-    "Rabbits",
-    "Guinea Pigs",
-    "Hamsters",
-    "Turtles",
-    "Parrots",
-    "Pigeons",
-    "Doves",
+    "Dog",
+    "Cat",
+    "Rabbit",
+    "Guinea Pig",
+    "Hamster",
+    "Turtle",
+    "Bird",
+    "Pigeon",
+    "Dove",
   ];
   
   const genders = ["male", "female"];
   const trainedOptions = ["yes", "no"];
   const ages = ["new born", "young", "adult", "old"];
 
+  // Initialize filters from URL params
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
+    
     setFilters({
       animal: params.animal || "",
-      gender: params.gender || "", // Fixed case (params.Gender → params.gender)
+      gender: params.gender || "",
       age: params.age || "",
       trained: params.trained || "",
       minPrice: params.minPrice || 0,
       maxPrice: params.maxPrice || 10000,
     });
-    setPriceRange([0, params.maxPrice ? Number(params.maxPrice) : 10000]);
+    
+    setPriceRange([
+      Number(params.minPrice || 0),
+      Number(params.maxPrice || 10000)
+    ]);
   }, [searchParams]);
   
   const handleFilterChange = (e) => {
-    const{name, value, checked, type } =e.target
-    let newFilters = { ...filters };
-
-if (type === "checkbox") {
-  if (checked) {
-    // Add the selected value to the array (avoid duplicates)
-    newFilters[name] = [...(newFilters[name] || []), value];
-  } else {
-    // Remove the unchecked value from the array
-    newFilters[name] = newFilters[name].filter((item) => item !== value);  
-  }
-}else{
-    newFilters[name] = value;
-}
-setFilters(newFilters);
-console.log(newFilters);
+    const { name, value } = e.target;
     
+    // Update the filters state
+    const newFilters = { ...filters, [name]: value };
+    setFilters(newFilters);
+    
+    // Update URL params
+    updateURLParams(newFilters);
+  };
+
+  const handlePriceChange = (e) => {
+    const newPrice = Number(e.target.value);
+  
+    // Update price range state
+    setPriceRange([0, newPrice]);
+  
+    // Update filters with new price range
+    const newFilters = { 
+      ...filters, 
+      minPrice: 0, 
+      maxPrice: newPrice 
+    };
+    
+    setFilters(newFilters);
+    
+    // Update URL params
     updateURLParams(newFilters);
   };
 
   const updateURLParams = (newFilters) => {
-    const params = new URLSearchParams();
-  
-    // Iterate through filter keys and update URL parameters
-    Object.keys(newFilters).forEach((key) => {
-      if (Array.isArray(newFilters[key]) && newFilters[key].length > 0) {
-        params.set(key, newFilters[key].join(",")); // Store arrays as comma-separated values
-      } else if (newFilters[key]) {
-        params.append(key, newFilters[key]); // Store single values
+    const params = new URLSearchParams(searchParams);
+    
+    // Update or remove each parameter based on filter values
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value && value !== 0) {
+        params.set(key, value);
+      } else {
+        params.delete(key);
       }
     });
-    setSearchParams(params);
-    navigate(`?${params.toString()}`);
- 
-  };
-  const handlePriceChange = (e) => {
-    const newPrice = Number(e.target.value); // Ensure it's a number
-  
-    setPriceRange([0, newPrice]);
-  
-    const newFilters = { ...filters, minPrice: 0, maxPrice: newPrice };
     
-    setFilters(newFilters); // Correctly update state
-    updateURLParams(newFilters); // Update the URL parameters
+    // Update the URL without reloading the page
+    setSearchParams(params);
+  };
+
+  // Function to clear all filters
+  const clearAllFilters = () => {
+    setFilters({
+      animal: "",
+      gender: "",
+      age: "",
+      trained: "",
+      minPrice: 0,
+      maxPrice: 10000,
+    });
+    
+    setPriceRange([0, 10000]);
+    setSearchParams(new URLSearchParams());
   };
 
   return (
     <div className="p-4">
-      <h3 className="text-xl font-medium text-gray-800 mb-4">Filter</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-medium text-gray-800">Filter</h3>
+        <button 
+          onClick={clearAllFilters}
+          className="text-sm text-blue-600 hover:underline"
+        >
+          Clear All
+        </button>
+      </div>
 
       {/* Animal Filter */}
       <div className="mb-6">
@@ -107,7 +134,7 @@ console.log(newFilters);
               name="animal"
               value={animal}
               onChange={handleFilterChange}
-              checked={filters.animal ===animal}
+              checked={filters.animal === animal}
               className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{animal}</span>
@@ -125,16 +152,15 @@ console.log(newFilters);
               name="gender"
               value={gender}
               onChange={handleFilterChange}
-              checked={filters.gender ===gender}
+              checked={filters.gender === gender}
               className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{gender}</span>
           </div>          
         ))}
-      
-      
       </div>
-      {/* trained Filter */}
+
+      {/* Trained Filter */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-2">Trained</label>
         {trainedOptions.map((trained) => (
@@ -144,15 +170,17 @@ console.log(newFilters);
               name="trained"
               value={trained}
               onChange={handleFilterChange}
-              checked={filters.trained ===trained}
+              checked={filters.trained === trained}
               className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{trained}</span>
           </div>          
         ))}
-        {/* age Filter */}
+      </div>
+
+      {/* Age Filter */}
       <div className="mb-6">
-        <label className="block text-gray-600 font-medium mb-2">age</label>
+        <label className="block text-gray-600 font-medium mb-2">Age</label>
         {ages.map((age) => (
           <div key={age} className="flex items-center mb-1">
             <input
@@ -160,34 +188,31 @@ console.log(newFilters);
               name="age"
               value={age}
               onChange={handleFilterChange}
-              checked={filters.age ===age}
+              checked={filters.age === age}
               className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{age}</span>
           </div>          
         ))}
-        {/* price Filter */}
-        <div className="mb-8">
-            <label className="block text-gray-600 font-medium mb-2">Price Range</label>
-        
-            <input
-              type="range"
-              name="priceRange" 
-              min={0} 
-              max={10000} 
-              value={priceRange[1]}
-              onChange={handlePriceChange}
-              className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" />
-            <div className="flex justify-between text-gray-600 mt-2">
-                <span>Rs.0</span>
-
-                <span>Rs.{priceRange[1]}</span>
-            </div>     
-            
-            
-        </div>          
-        
       </div>
+
+      {/* Price Filter */}
+      <div className="mb-8">
+        <label className="block text-gray-600 font-medium mb-2">Price Range</label>
+      
+        <input
+          type="range"
+          name="maxPrice" 
+          min={0} 
+          max={10000} 
+          value={priceRange[1]}
+          onChange={handlePriceChange}
+          className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" 
+        />
+        <div className="flex justify-between text-gray-600 mt-2">
+          <span>Rs.0</span>
+          <span>Rs.{priceRange[1]}</span>
+        </div>     
       </div>
     </div>
   );

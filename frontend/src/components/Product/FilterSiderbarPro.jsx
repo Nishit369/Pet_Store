@@ -2,13 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const FilterSidebarPro = () => {
-    
   const [searchParams, setSearchParams] = useSearchParams();
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
   const [filters, setFilters] = useState({
     animal: "",
-    brand: "",
+    brand: [],
     minPrice: 0,
     maxPrice: 10000,
   });
@@ -17,9 +16,9 @@ const FilterSidebarPro = () => {
 
   const animals = [
     "Dogs",
-	"Cats",
-	"Birds",
-	"Fish"
+    "Cats",
+    "Birds",
+    "Fish"
   ];
   
   const brands = [
@@ -49,13 +48,14 @@ const FilterSidebarPro = () => {
     "FeatherFood",
     "AquaStyle",
     "PetPack"
-];
+  ];
 
   useEffect(() => {
     const params = Object.fromEntries([...searchParams]);
     setFilters({
       animal: params.animal || "",
-      brand: params.brand || "",
+      // Parse brand as an array if it exists
+      brand: params.brand ? params.brand.split(",") : [],
       minPrice: params.minPrice || 0,
       maxPrice: params.maxPrice || 10000,
     });
@@ -80,20 +80,36 @@ const FilterSidebarPro = () => {
   };
 
   const updateURLParams = (newFilters) => {
-    const params = new URLSearchParams();
+    const params = new URLSearchParams(searchParams);
   
-    // Iterate through filter keys and update URL parameters
-    Object.keys(newFilters).forEach((key) => {
-      if (Array.isArray(newFilters[key]) && newFilters[key].length > 0) {
-        params.set(key, newFilters[key].join(",")); // Store arrays as comma-separated values
-      } else if (newFilters[key]) {
-        params.append(key, newFilters[key]); // Store single values
-      }
-    });
+    // Clear existing filter parameters
+    params.delete("animal");
+    params.delete("brand");
+    params.delete("minPrice");
+    params.delete("maxPrice");
+    
+    // Add animal filter if selected
+    if (newFilters.animal) {
+      params.set("animal", newFilters.animal);
+    }
+    
+    // Add brand filters if any are selected
+    if (newFilters.brand && newFilters.brand.length > 0) {
+      params.set("brand", newFilters.brand.join(","));
+    }
+    
+    // Add price range filters
+    if (newFilters.minPrice) {
+      params.set("minPrice", newFilters.minPrice);
+    }
+    
+    if (newFilters.maxPrice) {
+      params.set("maxPrice", newFilters.maxPrice);
+    }
+    
     setSearchParams(params);
-    navigate(`?${params.toString()}`);
- 
   };
+
   const handlePriceChange = (e) => {
     const newPrice = Number(e.target.value); // Ensure it's a number
   
@@ -105,9 +121,38 @@ const FilterSidebarPro = () => {
     updateURLParams(newFilters); // Update the URL parameters
   };
 
+  const handleClearAll = () => {
+    // Reset all filters to default values
+    const defaultFilters = {
+      animal: "",
+      brand: [],
+      minPrice: 0,
+      maxPrice: 10000
+    };
+    
+    setFilters(defaultFilters);
+    setPriceRange([0, 10000]);
+    
+    // Clear all filter params from URL but preserve other params
+    const params = new URLSearchParams(searchParams);
+    params.delete("animal");
+    params.delete("brand");
+    params.delete("minPrice");
+    params.delete("maxPrice");
+    setSearchParams(params);
+  };
+
   return (
     <div className="p-4">
-      <h3 className="text-xl font-medium text-gray-800 mb-4">Filter</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-medium text-gray-800">Filter</h3>
+        <button 
+          onClick={handleClearAll}
+          className="text-sm text-blue-600 hover:text-blue-800"
+        >
+          Clear All
+        </button>
+      </div>
 
       {/* Animal Filter */}
       <div className="mb-6">
@@ -119,16 +164,13 @@ const FilterSidebarPro = () => {
               name="animal"
               value={animal}
               onChange={handleFilterChange}
-              checked={filters.animal ===animal}
+              checked={filters.animal === animal}
               className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
             />
             <span className="text-gray-700">{animal}</span>
           </div>
         ))}
       </div>
-
-      
-     {/* /appointment  */}
       
       {/* Brand Filter */}
       <div className="mb-6">
@@ -148,30 +190,26 @@ const FilterSidebarPro = () => {
         ))}
       </div>
 
-        {/* price Filter */}
-        <div className="mb-8">
-            <label className="block text-gray-600 font-medium mb-2">Price Range</label>
-        
-            <input
-              type="range"
-              name="priceRange" 
-              min={0} 
-              max={10000} 
-              value={priceRange[1]}
-              onChange={handlePriceChange}
-              className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" />
-            <div className="flex justify-between text-gray-600 mt-2">
-                <span>Rs.0</span>
-
-                <span>Rs.{priceRange[1]}</span>
-            </div>     
-            
-            
-        </div>          
-        
+      {/* Price Filter */}
+      <div className="mb-8">
+        <label className="block text-gray-600 font-medium mb-2">Price Range</label>
+      
+        <input
+          type="range"
+          name="priceRange" 
+          min={0} 
+          max={10000} 
+          value={priceRange[1]}
+          onChange={handlePriceChange}
+          className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" 
+        />
+        <div className="flex justify-between text-gray-600 mt-2">
+          <span>Rs.0</span>
+          <span>Rs.{priceRange[1]}</span>
+        </div>
       </div>
-     
+    </div>
   );
-
 };
+
 export default FilterSidebarPro;
