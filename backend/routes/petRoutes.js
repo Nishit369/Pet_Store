@@ -148,4 +148,53 @@ router.get("/available/new", async (req, res) => {
   }
 });
 
+
+
+// @route POST /api/pets/purchase
+// @desc Purchase a pet
+// @access Private
+router.post("/purchase", protect, async (req, res) => {
+  try {
+    const { petId } = req.body;
+
+    // 1. Verify pet availability
+    const pet = await Pet.findById(petId);
+    if (!pet || !pet.isAvailable) {
+      return res.status(400).json({
+        success: false,
+        message: "Pet is no longer available for purchase",
+      });
+    }
+
+    // 2. Process payment (you'd integrate with a payment provider here)
+
+    // 3. Create order record
+    const order = new Order({
+      pet: petId,
+      buyer: req.user._id,  // Get the buyer ID from the authenticated user
+      purchaseDate: new Date(),
+      price: pet.price,
+      // Add other order details if needed
+    });
+
+    await order.save();
+
+    // 4. Update pet availability
+    pet.isAvailable = false;
+    await pet.save();
+
+    // 5. Return success response
+    return res.status(200).json({
+      success: true,
+      message: "Pet purchase successful",
+      order: order,
+    });
+  } catch (error) {
+    console.error("Pet purchase error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred during the purchase process",
+    });
+  }
+});
 module.exports = router;
