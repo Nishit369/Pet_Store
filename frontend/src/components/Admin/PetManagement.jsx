@@ -1,31 +1,33 @@
-import React from 'react'
-//import { useEffect } from "react";
-//import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-//import {
-//  deleteProduct,
-//  fetchAdminProducts,
-//} from "../../redux/slices/adminProductSlice";
+import {
+  deleteProduct,
+  fetchAdminProducts,
+} from "../../redux/slices/adminProductSlice";
 
 const PetManagement = () => {
-    const products = [
-        {
-          _id: 123123,
-          name: "Shirt",
-          price: 110,
-          sku: "123123213",
-        },
-      ];
-      const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete the Product?")) {
-            console.log("Delete product with id:", id);
-            
-          //dispatch(deleteProduct(id));
-        }
-      };
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector(
+    (state) => state.adminProducts
+  );
+
+  useEffect(() => {
+    dispatch(fetchAdminProducts());
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete the Product?")) {
+      dispatch(deleteProduct(id));
+    }
+  };
+
+  if (loading) return <p>Loading ...</p>;
+  if (error) return <p>Error: {error}</p>;
+
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-6">Pet Management</h2>
+      <h2 className="text-2xl font-bold mb-6">Product Management</h2>
       <div className="overflow-x-auto shadow-md sm:rounded-lg">
         <table className="min-w-full text-left text-gray-500">
           <thead className="bg-gray-100 text-xs uppercase text-gray-700">
@@ -77,5 +79,4 @@ const PetManagement = () => {
     </div>
   );
 };
-
 export default PetManagement;

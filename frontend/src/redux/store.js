@@ -7,6 +7,8 @@ import orderReducer from "./slices/orderSlice";
 import adminReducer from "./slices/adminSlice";
 import adminProductReducer from "./slices/adminProductSlice";
 import adminOrdersReducer from "./slices/adminOrderSlice";
+import adminTransactionReducer from './slices/adminTransactionSlice';
+
 
 const store = configureStore({
   reducer: {
@@ -18,6 +20,7 @@ const store = configureStore({
     admin: adminReducer,
     adminProducts: adminProductReducer,
     adminOrders: adminOrdersReducer,
+    adminTransactions: adminTransactionReducer,
   },
 });
 

@@ -5,7 +5,8 @@ import {
   FaStore,
   FaUser,
   FaDog,
-  FaCalendarAlt
+  FaCalendarAlt,
+  FaFileDownload,
 } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -54,7 +55,7 @@ const AdminSidebar = () => {
           <span>Products</span>
         </NavLink>
         <NavLink
-          to="/admin/orders"
+          to="/admin/pets"
           className={({ isActive }) =>
             isActive
               ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
@@ -88,7 +89,7 @@ const AdminSidebar = () => {
         </NavLink>
      
         <NavLink
-          to="/admin/orders"
+          to="/admin/shop"
           className={({ isActive }) =>
             isActive
               ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
@@ -97,6 +98,18 @@ const AdminSidebar = () => {
         >
           <FaStore />
           <span>Shop</span>
+        </NavLink>
+
+        <NavLink
+          to="/admin/transaction-summary"
+          className={({ isActive }) =>
+            isActive
+              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
+              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
+          }
+        >
+          <FaFileDownload />
+          <span>Transaction Summary</span>
         </NavLink>
       </nav>
       <div className="mt-6">

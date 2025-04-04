@@ -35,6 +35,7 @@ import store from "./redux/store";
 import ProtectedRoute from "./components/Common/ProtectedRoute";
 import AdminAppointment from "./components/Admin/AdminAppointment";
 import PetCheckout from "./pages/PetCheckout";
+import TransactionSummary from "./components/Admin/TransactionSummary";
 
 const App = () => {
   return (
@@ -72,7 +73,7 @@ const App = () => {
             <Route path="products/:id/edit" element={<EditProductPage />} />
             <Route path="orders" element={<OrderMangement />} />
             <Route path="appointment" element={<AdminAppointment />} />
-
+            <Route path="transaction-summary" element={<TransactionSummary />} />
         </Route>
 
         
