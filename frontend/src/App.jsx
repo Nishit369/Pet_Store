@@ -27,6 +27,7 @@ import DoctorLayout from "./components/Layout/DoctorLayout";
 import DoctorAppointmentPage from "./components/Doctor/DoctorAppointmentPage";
 import PetPayment from "./components/Cart/PetPayment";
 import DoctorRegister from "./pages/DoctorRegister";
+import PetSuccessPage from "./pages/PetSuccessPage";
 
 
 
@@ -62,6 +63,7 @@ const App = () => {
           <Route path="/pets/:productId" element={<PetCheckout />} />
           <Route path="/pet/checkout/:id" element={<PetPayment />} />
           <Route path="/doctor-register" element={<DoctorRegister />} />
+          <Route path="/pet/success/:productId" element={<PetSuccessPage />} />
         </Route>
         {/* Admin Routes - You can add an actual admin layout later */}
         <Route path="/admin" element={<ProtectedRoute role={'admin'}><AdminLayout /></ProtectedRoute>} >

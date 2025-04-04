@@ -1,5 +1,7 @@
 const express = require("express");
 const User = require("../models/User");
+const Appointment = require("../models/Appointment");
+const Doctor = require("../models/Doctor");
 const { protect, admin } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -66,17 +68,30 @@ router.put("/:id", protect, admin, async (req, res) => {
 // @route DELETE /api/admin/users/:id
 // @desc Delete a user
 // @access Private/Admin
+
 router.delete("/:id", protect, admin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    if (user) {
-      await user.deleteOne();
-      res.json({ message: "User deleted successfully" });
-    } else {
-      res.status(404).json({ message: "User not found" });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
+
+    if (user.role === "doctor") {
+      const doctor = await Doctor.findOne({ user_id: user._id });
+
+      if (doctor) {
+        await Appointment.deleteMany({ doctor_id: doctor._id });
+
+        await doctor.deleteOne();
+      }
+    }
+
+    await user.deleteOne();
+
+    res.json({ message: "User and related data removed successfully" });
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting user and related data:", error);
     res.status(500).json({ message: "Server Error" });
   }
 });
