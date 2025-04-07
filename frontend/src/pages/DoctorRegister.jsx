@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import register from "../assets/register.jpeg";
-import { toast, ToastContainer} from "react-toastify";
-
+import { toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../redux/slices/authSlice";
 import "react-toastify/dist/ReactToastify.css";
-
 
 const DoctorRegister = () => {
   const [name, setName] = useState("");
@@ -13,40 +13,95 @@ const DoctorRegister = () => {
   const [qualification, setQualification] = useState("");
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
+  const [fees, setFees] = useState("");
+  
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.auth);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setTimeout(() => {
-        
-    toast.success('Appointment successfully deleted!', {
+    
+    if (!name || !email || !password || !qualification || !description || !fees) {
+      toast.error("Please fill all required fields", {
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
       });
-    }, 1000);
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
-  }
+      return;
+    }
+
+    try {
+      // Create the user data object with all doctor fields
+      const userData = {
+        name,
+        email,
+        password,
+        role: "doctor",
+        qualification,
+        description,
+        address,
+        fees: Number(fees)
+      };
+      
+      // Dispatch the registerUser action
+      const resultAction = await dispatch(registerUser(userData));
+      
+      // Check if the action was fulfilled
+      if (registerUser.fulfilled.match(resultAction)) {
+        toast.success("Registration successful!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        
+        // Navigate to login page after successful registration
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      } else {
+        // If the action was rejected, the error will be handled by the useSelector above
+        const errorMessage = resultAction.payload?.message || "Registration failed. Please try again.";
+        toast.error(errorMessage, {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      toast.error("Registration failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  // Show error toast when error state changes
+  useEffect(() => {
+    if (error) {
+      toast.error(error.message || "Registration failed", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
+  }, [error]);
 
   return (
     <div className="flex">
-            <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-8 md:p-12">
         <form
           onSubmit={handleSubmit}
@@ -61,6 +116,7 @@ const DoctorRegister = () => {
               onChange={(e) => setName(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your Name"
+              required
             />
           </div>
           <div className="mb-4">
@@ -71,6 +127,7 @@ const DoctorRegister = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your email"
+              required
             />
           </div>
           <div className="mb-4">
@@ -81,6 +138,7 @@ const DoctorRegister = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your password"
+              required
             />
           </div>
           <div className="mb-4">
@@ -91,6 +149,7 @@ const DoctorRegister = () => {
               onChange={(e) => setQualification(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Enter your Qualification"
+              required
             />
           </div>
           <div className="mb-4">
@@ -100,6 +159,7 @@ const DoctorRegister = () => {
               onChange={(e) => setDescription(e.target.value)}
               className="w-full p-2 border rounded"
               placeholder="Short description about yourself"
+              required
             />
           </div>
           <div className="mb-4">
@@ -112,14 +172,26 @@ const DoctorRegister = () => {
               placeholder="Enter your Address"
             />
           </div>
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2">Consultation Fees</label>
+            <input
+              type="number"
+              value={fees}
+              onChange={(e) => setFees(e.target.value)}
+              className="w-full p-2 border rounded"
+              placeholder="Enter your consultation fees"
+              required
+            />
+          </div>
           <button
             type="submit"
             className="w-full bg-black text-white p-2 rounded-lg font-semibold hover:bg-gray-800 transition"
+            disabled={loading}
           >
-            Register
+            {loading ? "Registering..." : "Register"}
           </button>
           <p className="mt-6 text-center text-sm">
-            Already have an account? {" "}
+            Already have an account?{" "}
             <Link to="/login" className="text-blue-500">Login</Link>
           </p>
         </form>
