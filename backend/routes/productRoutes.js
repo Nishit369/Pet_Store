@@ -1,54 +1,54 @@
 const express = require("express");
 const Product = require("../models/Product");
-const { protect, admin} = require("../middleware/authMiddleware");
+const { protect, admin } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
 // @route POST /api/products
 // @desc Create a new Product
 // @access Private/Admin
-router.post("/", protect, admin,  async (req, res) => {
-    try {
-      const {
-        name,
-        description,
-        price,
-        countInStock,
-        brand,
-        collections,
-        animal,
-        images,
-        isFeatured,
-        isPublished,
-        tags,
-       
-        sku,
-      } = req.body;
-  
-      const product = new Product({
-        name,
-        description,
-        price,
-        countInStock,
-        brand,
-        collections,
-        animal,
-        images,
-        isFeatured,
-        isPublished,
-        tags,
-       
-        sku,
-        user: req.user._id, // Reference to the admin user who created it
-      });
-  
-      const createdProduct = await product.save();
-      res.status(201).json(createdProduct);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Server Error");
-    }
-  });
+router.post("/", protect, admin, async (req, res) => {
+  try {
+    const {
+      name,
+      description,
+      price,
+      countInStock,
+      brand,
+      collections,
+      animal,
+      images,
+      isFeatured,
+      isPublished,
+      tags,
+
+      sku,
+    } = req.body;
+
+    const product = new Product({
+      name,
+      description,
+      price,
+      countInStock,
+      brand,
+      collections,
+      animal,
+      images,
+      isFeatured,
+      isPublished,
+      tags,
+
+      sku,
+      user: req.user._id, // Reference to the admin user who created it
+    });
+
+    const createdProduct = await product.save();
+    res.status(201).json(createdProduct);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
 // @route PUT /api/products/:id
 // @desc Update an existing product ID
 // @access Private/Admin
@@ -66,7 +66,7 @@ router.put("/:id", protect, admin, async (req, res) => {
       isFeatured,
       isPublished,
       tags,
-     
+
       sku,
     } = req.body;
 
@@ -129,13 +129,12 @@ router.delete("/:id", protect, admin, async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const {
-      
       minPrice,
       maxPrice,
       sortBy,
       search,
       animal,
-      
+
       brand,
       limit,
     } = req.query;
@@ -143,7 +142,6 @@ router.get("/", async (req, res) => {
     let query = {};
 
     //  Filter logic
-    
 
     if (brand) {
       query.brand = { $in: brand.split(",") };
@@ -152,8 +150,6 @@ router.get("/", async (req, res) => {
     if (animal) {
       query.animal = { $in: animal.split(",") };
     }
-
-    
 
     if (minPrice || maxPrice) {
       query.price = {};
@@ -186,18 +182,18 @@ router.get("/", async (req, res) => {
       }
     }
 
-       // Fetch products and apply sorting and limit
-       let products = await Product.find(query)
-       .sort(sort)
-       .limit(Number(limit) || 0);
-     res.json(products);
-   } catch (error) {
-     console.error(error);
-     res.status(500).send("server Error");
-   }
- });
+    // Fetch products and apply sorting and limit
+    let products = await Product.find(query)
+      .sort(sort)
+      .limit(Number(limit) || 0);
+    res.json(products);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("server Error");
+  }
+});
 
- // @route GET /api/products/new-arrivals
+// @route GET /api/products/new-arrivals
 // @desc Retrieve latest 8 products - Creation date
 // @access Public
 router.get("/new-arrivals", async (req, res) => {
@@ -211,7 +207,7 @@ router.get("/new-arrivals", async (req, res) => {
   }
 });
 
- // @route GET /api/products/best-seller
+// @route GET /api/products/best-seller
 // @desc Retrieve the product with highest rating
 // @access Public
 router.get("/best-seller", async (req, res) => {
@@ -228,7 +224,7 @@ router.get("/best-seller", async (req, res) => {
   }
 });
 
- // @route GET /api/products/:id
+// @route GET /api/products/:id
 // @desc Get a single product by ID
 // @access Public
 router.get("/:id", async (req, res) => {
@@ -261,7 +257,6 @@ router.get("/similar/:id", async (req, res) => {
     const similarProducts = await Product.find({
       _id: { $ne: id }, // Exclude the current product ID
       animal: product.animal,
-      
     }).limit(4);
 
     res.json(similarProducts);
@@ -270,6 +265,5 @@ router.get("/similar/:id", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-  
 
- module.exports = router;
+module.exports = router;

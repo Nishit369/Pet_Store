@@ -15,7 +15,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    
+
     countInStock: {
       type: Number,
       required: true,
@@ -26,21 +26,19 @@ const productSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-   
-    
+
     brand: {
       type: String,
     },
-    
-   
+
     collections: {
       type: String,
       required: true,
     },
-    
+
     animal: {
       type: String,
-      enum: ["Dogs", "Cats", "Bird","Fish"],
+      enum: ["Dogs", "Cats", "Bird", "Fish"],
     },
     images: [
       {
@@ -84,8 +82,6 @@ const productSchema = new mongoose.Schema(
     metaKeywords: {
       type: String,
     },
-    
-    
   },
   { timestamps: true }
 );
