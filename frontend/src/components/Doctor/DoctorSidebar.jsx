@@ -30,6 +30,13 @@ const DoctorSidebar = () => {
           <FaCalendarAlt />
           <span>My Appointments</span>
         </button>
+        <button
+          onClick={() => navigate("/doctor/summary")}
+          className="bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2 hover:bg-gray-600"
+        >
+          <FaCalendarAlt />
+          <span>Summary</span>
+        </button>
       </nav>
       <div className="mt-6">
         <button
