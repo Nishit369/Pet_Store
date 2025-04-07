@@ -58,9 +58,8 @@ const DoctorRegister = () => {
           progress: undefined,
         });
         
-        // Navigate to login page after successful registration
         setTimeout(() => {
-          navigate("/login");
+          navigate("/doctor");
         }, 2000);
       } else {
         // If the action was rejected, the error will be handled by the useSelector above

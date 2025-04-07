@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css"
 // Component for displaying and managing a single appointment
 const AdminAppointment = ({ appointment, onUpdateStatus }) => {
   // Format date for display
+  console.log("this is appointment",appointment)
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { 
@@ -86,6 +87,11 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
         <p className="text-sm text-gray-600 mt-1">
           Created: {new Date(appointment.createdAt).toLocaleString()}
         </p>
+        {appointment.accepted_by && (
+  <p className="text-xs text-gray-500 mt-1">
+    Accepted By: <span className="font-medium text-white bg-indigo-600 p-1 px-3 mt-3 rounded-full">{appointment.accepted_by}</span>
+  </p>
+)}
       </div>
         {/* <ToastContainer /> */}
       {/* Card Body */}
@@ -188,7 +194,7 @@ const AppointmentsList = () => {
         headers: {
             'Content-Type' : 'application/json',
         },
-        body:JSON.stringify({status: newStatus}),
+        body:JSON.stringify({status: newStatus, accepted_by:"admin"}),
 });
 if (!response.ok) {
     throw new Error('Failed to update appointment status');

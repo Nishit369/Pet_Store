@@ -62,6 +62,7 @@ router.get("/all", async (req, res) => {
       .populate({ path: "doctor_id", populate: "user_id" })
       .sort({ createdAt: -1 });
     res.json(allAppointments);
+    console.log(allAppointments);
   } catch (err) {
     res
       .status(500)

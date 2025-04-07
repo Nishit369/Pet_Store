@@ -188,7 +188,7 @@ const DoctorAppointmentsList = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ status: newStatus,accepted_by:"doctor" }),
       });
       
       if (!response.ok) {
