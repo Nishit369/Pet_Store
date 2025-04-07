@@ -6,6 +6,8 @@ import { fetchProductsByFilters } from "../redux/slices/productsSlice";
 import FilterSidebarPro from "../components/Product/FilterSiderbarPro";
 import SortOptions from "../components/Product/SortOptions";
 import ProductGrid from "../components/Product/ProductGrid";
+import SearchBar from "../components/Common/SearchBar";
+
 const CollectionProducts = () => {
   const { collection } = useParams();
   const [searchParams] = useSearchParams();
@@ -53,6 +55,7 @@ const CollectionProducts = () => {
 
       {/* Filter Sidebar */}
       <div
+        ref={sidebarRef}
         className={`${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } fixed inset-y-0 z-50 left-0 w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}
@@ -62,6 +65,9 @@ const CollectionProducts = () => {
       <div className="flex-grow p-4">
         <h2 className="text-2xl uppercase mb-4">All Collection</h2>
 
+        {/* Add Search Component */}
+        <SearchBar contextType="products" />
+        
         {/* Sort Options */}
         <SortOptions />
 

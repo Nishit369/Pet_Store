@@ -77,10 +77,6 @@ const Navbar = () => {
               {cartItemCount}
             </span>
           </button>
-          {/** search*/}
-          <div className="overflow-hidden">
-            <SearchBar />
-          </div>
           <button onClick={toggleNavDrawer} className="md:hidden">
             <HiBars3BottomRight className="h-6 w-6 text-gray-700 " />
           </button>

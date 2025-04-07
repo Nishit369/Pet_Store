@@ -134,15 +134,13 @@ router.get("/", async (req, res) => {
       sortBy,
       search,
       animal,
-
       brand,
       limit,
     } = req.query;
 
     let query = {};
 
-    //  Filter logic
-
+    // Your existing filter logic...
     if (brand) {
       query.brand = { $in: brand.split(",") };
     }
@@ -157,14 +155,17 @@ router.get("/", async (req, res) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
+    // Make sure search is working as expected
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } },
+        { brand: { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } }
       ];
     }
 
-    // Sort Logic
+    // Your existing sorting logic...
     let sort = {};
     if (sortBy) {
       switch (sortBy) {
@@ -187,55 +188,6 @@ router.get("/", async (req, res) => {
       .sort(sort)
       .limit(Number(limit) || 0);
     res.json(products);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("server Error");
-  }
-});
-
-// @route GET /api/products/new-arrivals
-// @desc Retrieve latest 8 products - Creation date
-// @access Public
-router.get("/new-arrivals", async (req, res) => {
-  try {
-    // Fetch latest 8 products
-    const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(8);
-    res.json(newArrivals);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route GET /api/products/best-seller
-// @desc Retrieve the product with highest rating
-// @access Public
-router.get("/best-seller", async (req, res) => {
-  try {
-    const bestSeller = await Product.findOne().sort({ rating: -1 });
-    if (bestSeller) {
-      res.json(bestSeller);
-    } else {
-      res.status(404).json({ message: "No best seller found" });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Server Error");
-  }
-});
-
-// @route GET /api/products/:id
-// @desc Get a single product by ID
-// @access Public
-router.get("/:id", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (product) {
-      res.json(product);
-    } else {
-      console.error(error);
-      rres.status(404).json({ message: "Product not found" });
-    }
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");

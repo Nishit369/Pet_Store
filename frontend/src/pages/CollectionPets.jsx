@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import FilterSidebar from '../components/Product/FilterSidebar';
 import SortOptions from '../components/Product/SortOptions';
 import ProductGrid from '../components/Product/ProductGrid';
+import SearchBar from '../components/Common/SearchBar';
 
 const CollectionPets = () => {
     const [products, setProducts] = useState([]);
@@ -35,7 +36,17 @@ const CollectionPets = () => {
         const fetchPets = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:9000/api/pets');
+                
+                // Get search query from URL parameters
+                const searchQuery = searchParams.get('search');
+                let url = 'http://localhost:9000/api/pets';
+                
+                // Add search query to the request if present
+                if (searchQuery) {
+                    url += `?search=${encodeURIComponent(searchQuery)}`;
+                }
+                
+                const response = await fetch(url);
                 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch pets: ${response.statusText}`);
@@ -52,7 +63,7 @@ const CollectionPets = () => {
         };
         
         fetchPets();
-    }, []);
+    }, [searchParams]);
 
     // Apply filters and sorting when products or search params change
     useEffect(() => {
@@ -133,6 +144,10 @@ const CollectionPets = () => {
             </div>
             <div className="flex-grow p-4">
                 <h2 className="text-2xl uppercase mb-4">pets</h2>
+                
+                {/* Add Search Component */}
+                <SearchBar contextType="pets" />
+                
                 {/** sort options */}
                 <SortOptions />
                 {/**product grid */}

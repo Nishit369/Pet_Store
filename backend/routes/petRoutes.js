@@ -53,14 +53,26 @@ router.post("/", protect, admin, async (req, res) => {
 // @access Public
 router.get("/", async (req, res) => {
   try {
-    const { type, breed, gender, size, minPrice, maxPrice, minAge, maxAge } =
+    const { type, breed, gender, size, minPrice, maxPrice, minAge, maxAge, search } =
       req.query;
     const filter = {};
 
+    // Your existing filters...
     if (type) filter.type = type;
     if (breed) filter.breed = breed;
     if (gender) filter.gender = gender;
     if (size) filter.size = size;
+    
+    // Add text search capability
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+        { breed: { $regex: search, $options: "i" } }
+      ];
+    }
+    
+    // Your existing price and age filters...
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice) filter.price.$gte = Number(minPrice);
