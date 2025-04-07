@@ -25,12 +25,12 @@ const petSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      enum: ["Male", "Female"],
+      enum: ["male", "female"], // lowercased
       required: true,
     },
     size: {
       type: String,
-      enum: ["Small", "Medium", "Large"],
+      enum: ["small", "medium", "large"], // lowercased
       required: true,
     },
     countInStock: {
@@ -38,14 +38,9 @@ const petSchema = new mongoose.Schema(
       required: true,
       default: 1,
     },
-    petId: {
-      type: String,
-      unique: true,
-      required: true,
-    },
     type: {
       type: String,
-      enum: ["Dog", "Cat", "Bird", "Fish"],
+      enum: ["dog", "cat", "bird", "fish", "reptile"], // lowercased
       required: true,
     },
     vaccinated: {

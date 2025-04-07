@@ -20,10 +20,10 @@ router.post("/", protect, admin, async (req, res) => {
       type,
       vaccinated,
       trained,
-      images,
+      image,
       petId,
     } = req.body;
-
+    console.log(req.body);
     const pet = new Pet({
       name,
       description,
@@ -35,7 +35,7 @@ router.post("/", protect, admin, async (req, res) => {
       type,
       vaccinated,
       trained,
-      images,
+      images: [{ url: image, altText: "pet image" }],
       petId,
       user: req.user._id,
     });
@@ -53,8 +53,17 @@ router.post("/", protect, admin, async (req, res) => {
 // @access Public
 router.get("/", async (req, res) => {
   try {
-    const { type, breed, gender, size, minPrice, maxPrice, minAge, maxAge, search } =
-      req.query;
+    const {
+      type,
+      breed,
+      gender,
+      size,
+      minPrice,
+      maxPrice,
+      minAge,
+      maxAge,
+      search,
+    } = req.query;
     const filter = {};
 
     // Your existing filters...
@@ -62,16 +71,16 @@ router.get("/", async (req, res) => {
     if (breed) filter.breed = breed;
     if (gender) filter.gender = gender;
     if (size) filter.size = size;
-    
+
     // Add text search capability
     if (search) {
       filter.$or = [
         { name: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } },
-        { breed: { $regex: search, $options: "i" } }
+        { breed: { $regex: search, $options: "i" } },
       ];
     }
-    
+
     // Your existing price and age filters...
     if (minPrice || maxPrice) {
       filter.price = {};
@@ -137,7 +146,7 @@ router.delete("/:id", protect, admin, async (req, res) => {
       return res.status(404).json({ message: "Pet not found" });
     }
 
-    await pet.remove();
+    await pet.deleteOne();
     res.json({ message: "Pet removed" });
   } catch (error) {
     console.error(error);
