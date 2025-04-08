@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   const [doctors, setDoctors] = useState([]);
+  const [filteredDoctors, setFilteredDoctors] = useState([]);
+  const [specializations, setSpecializations] = useState([]);
+  const [selectedSpecialization, setSelectedSpecialization] = useState("all");
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -11,12 +14,62 @@ export default function HomePage() {
         const response = await fetch("http://localhost:9000/api/doctor/all");
         const data = await response.json();
         setDoctors(data);
+        setFilteredDoctors(data);
+        
+        // Extract unique specializations from descriptions
+        const uniqueSpecs = [...new Set(data.map(doctor => doctor.description))];
+        setSpecializations(uniqueSpecs);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       }
     };
     fetchDoctors();
   }, []);
+
+  const scrollToSection = (sectionId) => {
+    // If we're already on the homepage
+    if (location.pathname === '/doc') {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // If we're on another page, navigate to home and then scroll
+      navigate('/doc', { state: { scrollTo: sectionId } });
+    }
+  };
+  
+  // Filter doctors based on selected specialization
+  const handleFilterChange = (spec) => {
+    setSelectedSpecialization(spec);
+    if (spec === "all") {
+      setFilteredDoctors(doctors);
+    } else {
+      const filtered = doctors.filter(doctor => doctor.description === spec);
+      setFilteredDoctors(filtered);
+    }
+  };
+
+  // Navigation handlers
+  const handleBookAppointment = () => {
+    scrollToSection("doctors-section")
+  };
+  
+  const handleCreateAccount = () => {
+    navigate("/signup");
+  };
+  
+  const handleLearnMore = () => {
+    navigate("/about");
+  };
+  
+  const handleSpecialOffer = () => {
+    navigate("/about");
+  };
+  
+  const handleViewAllVets = () => {
+    navigate("/veterinarians");
+  };
   
   return (
     <div className="font-sans bg-gray-50">
@@ -31,14 +84,19 @@ export default function HomePage() {
             <div className="md:w-1/2 mb-8 md:mb-0">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">Your Pet's Health Matters</h1>
               <p className="text-xl mb-8">Schedule appointments with trusted veterinarians who care for your furry friends like family.</p>
-              <button className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-100 transition duration-300 shadow-lg">
+              <button 
+                onClick={handleBookAppointment}
+                className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-100 transition duration-300 shadow-lg"
+              >
                 Book Appointment →
               </button>
             </div>
             <div className="md:w-1/2 flex justify-center">
-              <img src="https://www.rd.com/wp-content/uploads/2024/05/GettyImages-1041987488-scaled-e1714713424901.jpg" className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-2xl relative overflow-hidden object-cover">
-                {/* This would be an actual image in production */}
-              </img>
+              <img 
+                src="https://www.rd.com/wp-content/uploads/2024/05/GettyImages-1041987488-scaled-e1714713424901.jpg" 
+                alt="Happy pet with veterinarian" 
+                className="w-64 h-64 md:w-80 md:h-80 rounded-full bg-white shadow-2xl relative overflow-hidden object-cover"
+              />
             </div>
           </div>
         </div>
@@ -57,7 +115,10 @@ export default function HomePage() {
               <div className="md:w-2/3 p-8">
                 <h2 className="text-2xl font-bold text-orange-600 mb-3">Special Offer for New Pet Parents!</h2>
                 <p className="text-gray-700 mb-6">First-time visit includes a comprehensive health check and free nutrition consultation. Your furry friend deserves the very best care!</p>
-                <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition duration-300">
+                <button 
+                  onClick={handleSpecialOffer}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition duration-300"
+                >
                   Learn More
                 </button>
               </div>
@@ -66,17 +127,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Top Doctors (renamed to Veterinarians) */}
-      <section className="py-16 px-4 bg-white">
+      {/* Top Doctors (renamed to Veterinarians) with Filtering */}
+      <section className="py-16 px-4 bg-white" id="doctors-section">
         <div className="container mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800">Our Top Veterinarians</h2>
             <p className="text-gray-600 mt-2">Experienced professionals who love animals as much as you do</p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {doctors.length > 0 ? (
-              doctors.map((doctor) => (
+          {/* Specialization Filter */}
+          <div className="mb-8 flex flex-wrap justify-center gap-2">
+            <button
+              onClick={() => handleFilterChange("all")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
+                selectedSpecialization === "all"
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              }`}
+            >
+              All Specializations
+            </button>
+            
+            {specializations.map((spec, index) => (
+              <button
+                key={index}
+                onClick={() => handleFilterChange(spec)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${
+                  selectedSpecialization === spec
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+              >
+                {spec}
+              </button>
+            ))}
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" >
+            {filteredDoctors.length > 0 ? (
+              filteredDoctors.map((doctor) => (
                 <div
                   key={doctor._id}
                   className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white border border-gray-100 cursor-pointer transform hover:scale-105 transition-transform duration-300"
@@ -102,7 +191,13 @@ export default function HomePage() {
                         </svg>
                         <span>Available for appointments</span>
                       </div>
-                      <button className="w-full mt-4 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-2 rounded-lg transition duration-300">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/appointment/${doctor._id}`);
+                        }}
+                        className="w-full mt-4 bg-blue-50 hover:bg-blue-100 text-blue-600 font-medium py-2 rounded-lg transition duration-300"
+                      >
                         Book Now
                       </button>
                     </div>
@@ -110,26 +205,19 @@ export default function HomePage() {
                 </div>
               ))
             ) : (
-              <div className="col-span-full flex justify-center items-center py-12">
-                <div className="animate-pulse flex space-x-4">
-                  <div className="rounded-full bg-blue-100 h-12 w-12"></div>
-                  <div className="flex-1 space-y-4 py-1">
-                    <div className="h-4 bg-blue-100 rounded w-3/4"></div>
-                    <div className="space-y-2">
-                      <div className="h-4 bg-blue-100 rounded"></div>
-                      <div className="h-4 bg-blue-100 rounded w-5/6"></div>
-                    </div>
-                  </div>
-                </div>
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-600 mb-4">No veterinarians found with the selected specialization.</p>
+                <button
+                  onClick={() => handleFilterChange("all")}
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-600 font-medium px-6 py-2 rounded-lg transition duration-300"
+                >
+                  Show All Veterinarians
+                </button>
               </div>
             )}
           </div>
           
-          <div className="text-center mt-12">
-            <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-8 py-3 rounded-full transition duration-300">
-              View All Veterinarians
-            </button>
-          </div>
+          
         </div>
       </section>
 
@@ -142,10 +230,16 @@ export default function HomePage() {
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Give Your Pet the Care They Deserve</h2>
           <p className="mb-8 text-lg max-w-2xl mx-auto">Join our community of pet lovers and access premium veterinary services from over 100+ trusted professionals.</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-full font-semibold shadow-lg transition duration-300">
+            <button 
+              onClick={handleCreateAccount}
+              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-full font-semibold shadow-lg transition duration-300"
+            >
               Create Account
             </button>
-            <button className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-full font-semibold transition duration-300">
+            <button 
+              onClick={handleLearnMore}
+              className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-full font-semibold transition duration-300"
+            >
               Learn More
             </button>
           </div>

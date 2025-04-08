@@ -9,7 +9,8 @@ const FilterSidebar = () => {
     animal: "",
     gender: "",
     age: "",
-    trained: "",
+    trained: true,
+    color: "",
     minPrice: 0,
     maxPrice: 10000,
   });
@@ -31,6 +32,27 @@ const FilterSidebar = () => {
   const genders = ["male", "female"];
   const trainedOptions = ["yes", "no"];
   const ages = ["new born", "young", "adult", "old"];
+  
+  // Common animal colors for all animals
+  const colors = [
+    "Black", 
+    "White", 
+    "Brown", 
+    "Golden", 
+    "Gray", 
+    "Cream", 
+    "Red", 
+    "Orange",
+    "Yellow",
+    "Green", 
+    "Blue",
+    "Purple",
+    "Pink",
+    "Spotted", 
+    "Striped",
+    "Brindle", 
+    "Multicolor"
+  ];
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -41,6 +63,7 @@ const FilterSidebar = () => {
       gender: params.gender || "",
       age: params.age || "",
       trained: params.trained || "",
+      color: params.color || "",
       minPrice: params.minPrice || 0,
       maxPrice: params.maxPrice || 10000,
     });
@@ -56,6 +79,12 @@ const FilterSidebar = () => {
     
     // Update the filters state
     const newFilters = { ...filters, [name]: value };
+    
+    // If animal changes, reset the color filter
+    if (name === 'animal') {
+      newFilters.color = "";
+    }
+    
     setFilters(newFilters);
     
     // Update URL params
@@ -104,6 +133,7 @@ const FilterSidebar = () => {
       gender: "",
       age: "",
       trained: "",
+      color: "",
       minPrice: 0,
       maxPrice: 10000,
     });
@@ -111,6 +141,9 @@ const FilterSidebar = () => {
     setPriceRange([0, 10000]);
     setSearchParams(new URLSearchParams());
   };
+
+  // Only show color filter when an animal type is selected
+  const showColorFilter = filters.animal !== "";
 
   return (
     <div className="p-4">
@@ -141,6 +174,26 @@ const FilterSidebar = () => {
           </div>
         ))}
       </div>
+
+      {/* Color Filter - Show when any animal is selected */}
+      {showColorFilter && (
+        <div className="mb-6">
+          <label className="block text-gray-600 font-medium mb-2">Color</label>
+          {colors.map((color) => (
+            <div key={color} className="flex items-center mb-1">
+              <input
+                type="radio"
+                name="color"
+                value={color}
+                onChange={handleFilterChange}
+                checked={filters.color === color}
+                className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
+              />
+              <span className="text-gray-700">{color}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Gender Filter */}
       <div className="mb-6">

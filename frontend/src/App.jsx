@@ -37,6 +37,8 @@ import ProtectedRoute from "./components/Common/ProtectedRoute";
 import AdminAppointment from "./components/Admin/AdminAppointment";
 import PetCheckout from "./pages/PetCheckout";
 import TransactionSummary from "./components/Admin/TransactionSummary";
+import AboutUs from "./pages/About";
+import Footer from "./components/Common/Footer";
 
 const App = () => {
   return (
@@ -64,6 +66,9 @@ const App = () => {
           <Route path="/pet/checkout/:id" element={<PetPayment />} />
           <Route path="/doctor-register" element={<DoctorRegister />} />
           <Route path="/pet/success/:productId" element={<PetSuccessPage />} />
+          <Route path="/footer" element={<Footer />} />
+
+          <Route path="/about" element={<AboutUs/>} />
         </Route>
         {/* Admin Routes - You can add an actual admin layout later */}
         <Route path="/admin" element={<ProtectedRoute role={'admin'}><AdminLayout /></ProtectedRoute>} >

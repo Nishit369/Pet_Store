@@ -40,7 +40,7 @@ const petSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["dog", "cat", "bird", "fish", "reptile"], // lowercased
+      enum: ["dog", "cat", "bird", "fish", "reptile"], 
       required: true,
     },
     vaccinated: {
@@ -63,6 +63,10 @@ const petSchema = new mongoose.Schema(
         },
       },
     ],
+    color: {
+      type: String,
+      required: false,
+    },
     isAvailable: {
       type: Boolean,
       default: true,

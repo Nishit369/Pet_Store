@@ -8,7 +8,6 @@ import SearchBar from '../components/Common/SearchBar';
 
 const CollectionPets = () => {
     const [products, setProducts] = useState([]);
-    const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchParams] = useSearchParams();
@@ -41,9 +40,56 @@ const CollectionPets = () => {
                 const searchQuery = searchParams.get('search');
                 let url = 'http://localhost:9000/api/pets';
                 
-                // Add search query to the request if present
+                // Build query string with all parameters
+                const queryParams = new URLSearchParams();
+                
                 if (searchQuery) {
-                    url += `?search=${encodeURIComponent(searchQuery)}`;
+                    queryParams.append('search', searchQuery);
+                }
+                
+                // Add other potential filter params to the API request
+                const animal = searchParams.get('animal');
+                const gender = searchParams.get('gender');
+                const age = searchParams.get('age'); 
+                const trained = searchParams.get('trained');
+                const minPrice = searchParams.get('minPrice');
+                const maxPrice = searchParams.get('maxPrice');
+                const color = searchParams.get('color');
+                
+                // Convert animal type to lowercase to match backend enum
+                if (animal) queryParams.append('type', animal.toLowerCase());
+                if (gender) queryParams.append('gender', gender.toLowerCase());
+                if (trained) queryParams.append('trained', trained);
+                if (minPrice) queryParams.append('minPrice', minPrice);
+                if (maxPrice) queryParams.append('maxPrice', maxPrice);
+                
+                // Handle age ranges
+                if (age) {
+                    // Convert age categories to numeric ranges for the backend
+                    switch(age) {
+                        case 'new born':
+                            queryParams.append('maxAge', 1);
+                            break;
+                        case 'young':
+                            queryParams.append('minAge', 1);
+                            queryParams.append('maxAge', 3);
+                            break;
+                        case 'adult':
+                            queryParams.append('minAge', 3);
+                            queryParams.append('maxAge', 7);
+                            break;
+                        case 'old':
+                            queryParams.append('minAge', 7);
+                            break;
+                    }
+                }
+                
+                // Handle color with case insensitivity
+                if (color) queryParams.append('color', color);
+                
+                // Append query string to URL if we have parameters
+                if (queryParams.toString()) {
+                    url += `?${queryParams.toString()}`;
                 }
                 
                 const response = await fetch(url);
@@ -65,73 +111,6 @@ const CollectionPets = () => {
         fetchPets();
     }, [searchParams]);
 
-    // Apply filters and sorting when products or search params change
-    useEffect(() => {
-        if (!products.length) return;
-        
-        let result = [...products];
-        
-        // Apply filters
-        const animal = searchParams.get('animal');
-        const gender = searchParams.get('gender');
-        const age = searchParams.get('age');
-        const trained = searchParams.get('trained');
-        const minPrice = searchParams.get('minPrice') || 0;
-        const maxPrice = searchParams.get('maxPrice') || 10000;
-        
-        if (animal) {
-            result = result.filter(pet => pet.type?.toLowerCase() === animal.toLowerCase());
-        }
-        
-        if (gender) {
-            result = result.filter(pet => pet.gender?.toLowerCase() === gender.toLowerCase());
-        }
-        
-        if (age) {
-            result = result.filter(pet => categorizeAge(pet.age) === age.toLowerCase());
-        }
-        
-        function categorizeAge(age) {
-            if (age <= 1) return 'new born';
-            if (age <= 3) return 'young';
-            if (age <= 7) return 'adult';
-            return 'old';
-        }
-        
-        if (trained) {
-            result = result.filter(pet => 
-                trained === 'yes' ? pet.trained : !pet.trained
-            );
-        }
-        
-        // Filter by price range
-        result = result.filter(pet => 
-            pet.price >= Number(minPrice) && pet.price <= Number(maxPrice)
-        );
-        
-        // Apply sorting
-        const sortBy = searchParams.get('sortBy');
-        if (sortBy) {
-            switch (sortBy) {
-                case 'priceAsc':
-                    result.sort((a, b) => a.price - b.price);
-                    break;
-                case 'priceDesc':
-                    result.sort((a, b) => b.price - a.price);
-                    break;
-                case 'popularity':
-                    // Assuming you have a 'popularity' or 'ratings' field
-                    result.sort((a, b) => b.popularity - a.popularity);
-                    break;
-                default:
-                    // Default sorting logic if needed
-                    break;
-            }
-        }
-        
-        setFilteredProducts(result);
-    }, [products, searchParams]);
-
     return (
         <div className="flex flex-col lg:flex-row">
             {/*mobile filter button*/}
@@ -152,7 +131,7 @@ const CollectionPets = () => {
                 <SortOptions />
                 {/**product grid */}
                 <ProductGrid 
-                    products={filteredProducts} 
+                    products={products}
                     loading={loading} 
                     error={error}
                     productType="pets" 

@@ -18,10 +18,10 @@ router.post("/", protect, admin, async (req, res) => {
       gender,
       size,
       type,
+      color, 
       vaccinated,
       trained,
       image,
-      petId,
     } = req.body;
     console.log(req.body);
     const pet = new Pet({
@@ -33,10 +33,10 @@ router.post("/", protect, admin, async (req, res) => {
       gender,
       size,
       type,
+      color, 
       vaccinated,
       trained,
       images: [{ url: image, altText: "pet image" }],
-      petId,
       user: req.user._id,
     });
 
@@ -58,42 +58,59 @@ router.get("/", async (req, res) => {
       breed,
       gender,
       size,
+      color,
       minPrice,
       maxPrice,
       minAge,
       maxAge,
       search,
+      trained,      
+      vaccinated    
     } = req.query;
-    const filter = {};
-
-    // Your existing filters...
-    if (type) filter.type = type;
-    if (breed) filter.breed = breed;
-    if (gender) filter.gender = gender;
-    if (size) filter.size = size;
-
-    // Add text search capability
-    if (search) {
-      filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-        { breed: { $regex: search, $options: "i" } },
-      ];
-    }
-
-    // Your existing price and age filters...
+    
+    const filter = [];
+    
+    // Basic filters
+    if (type) filter.push({ type });
+    if (breed) filter.push({ breed });
+    if (gender) filter.push({ gender });
+    if (size) filter.push({ size });
+    if (color) filter.push({ color });
+    
+    // Trained and Vaccinated filters
+    if (trained !== undefined) filter.push({ trained: trained === "yes" });
+    
+    
+    // Price filter
     if (minPrice || maxPrice) {
-      filter.price = {};
-      if (minPrice) filter.price.$gte = Number(minPrice);
-      if (maxPrice) filter.price.$lte = Number(maxPrice);
+      const priceFilter = {};
+      if (minPrice) priceFilter.$gte = Number(minPrice);
+      if (maxPrice) priceFilter.$lte = Number(maxPrice);
+      filter.push({ price: priceFilter });
     }
+    
+    // Age filter
     if (minAge || maxAge) {
-      filter.age = {};
-      if (minAge) filter.age.$gte = Number(minAge);
-      if (maxAge) filter.age.$lte = Number(maxAge);
+      const ageFilter = {};
+      if (minAge) ageFilter.$gte = Number(minAge);
+      if (maxAge) ageFilter.$lte = Number(maxAge);
+      filter.push({ age: ageFilter });
     }
-
-    const pets = await Pet.find(filter);
+    
+    // Search logic added as $or, wrapped inside $and
+    if (search) {
+      filter.push({
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { description: { $regex: search, $options: "i" } },
+          { breed: { $regex: search, $options: "i" } },
+          { color: { $regex: search, $options: "i" } },
+        ],
+      });
+    }
+    
+    const finalQuery = filter.length > 0 ? { $and: filter } : {};
+    const pets = await Pet.find(finalQuery);
     res.json(pets);
   } catch (error) {
     console.error(error);
@@ -126,8 +143,27 @@ router.put("/:id", protect, admin, async (req, res) => {
     if (!pet) {
       return res.status(404).json({ message: "Pet not found" });
     }
+    // console.log(pet)
+    // Update fields manually or safely with checks
+    pet.name = req.body.name || pet.name;
+    pet.description = req.body.description || pet.description;
+    pet.price = req.body.price || pet.price;
+    pet.breed = req.body.breed || pet.breed;
+    pet.age = req.body.age || pet.age;
+    pet.gender = req.body.gender || pet.gender;
+    pet.size = req.body.size || pet.size;
+    pet.type = req.body.type || pet.type;
+    pet.color = req.body.color || pet.color;
+    pet.vaccinated = req.body.vaccinated ?? pet.vaccinated;
+    pet.trained = req.body.trained ?? pet.trained;
 
-    Object.assign(pet, req.body);
+    // Explicitly update image(s)
+    if (req.body.image) {
+      pet.images = [{ url: req.body.image, altText: "pet image" }];
+    } else if (req.body.images) {
+      pet.images = req.body.images;
+    }
+
     const updatedPet = await pet.save();
     res.json(updatedPet);
   } catch (error) {

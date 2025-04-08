@@ -33,7 +33,7 @@ const PetManagement = () => {
     images: [],
     isAvailable: true
   });
-
+  // console.log(currentPet.trained)
   const getAuthHeaders = () => {
     const token = localStorage.getItem("userToken");
     return {
@@ -614,6 +614,34 @@ const PetManagement = () => {
                           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500"
                         ></textarea>
                       </div>
+                      <div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Color</label>
+  <select
+    name="color"
+    value={currentPet.color}
+    onChange={handlePetInputChange}
+    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-blue-500"
+  >
+    <option value="">Select a color</option>
+    <option value="Black">Black</option>
+    <option value="White">White</option>
+    <option value="Brown">Brown</option>
+    <option value="Golden">Golden</option>
+    <option value="Gray">Gray</option>
+    <option value="Cream">Cream</option>
+    <option value="Red">Red</option>
+    <option value="Orange">Orange</option>
+    <option value="Yellow">Yellow</option>
+    <option value="Green">Green</option>
+    <option value="Blue">Blue</option>
+    <option value="Purple">Purple</option>
+    <option value="Pink">Pink</option>
+    <option value="Spotted">Spotted</option>
+    <option value="Striped">Striped</option>
+    <option value="Brindle">Brindle</option>
+    <option value="Multicolor">Multicolor</option>
+  </select>
+</div>
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
@@ -626,25 +654,28 @@ const PetManagement = () => {
                         
                         {/* Image preview */}
                         {currentPet.images && currentPet.images.length > 0 && (
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {currentPet.images.map((img, index) => (
-                              <div key={index} className="relative w-16 h-16">
-                                <img 
-                                  src={img} 
-                                  alt={`Pet image ${index + 1}`} 
-                                  className="w-full h-full object-cover rounded"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => removeImage(index)}
-                                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 w-5 h-5 flex items-center justify-center text-xs"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+  <div className="mt-2 flex flex-wrap gap-2">
+    {currentPet.images.map((img, index) => {
+      const imageUrl = typeof img === "string" ? img : img.url;
+      return (
+        <div key={index} className="relative w-16 h-16">
+          <img 
+            src={imageUrl} 
+            alt={`Pet image ${index + 1}`} 
+            className="w-full h-full object-cover rounded"
+          />
+          <button
+            type="button"
+            onClick={() => removeImage(index)}
+            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 w-5 h-5 flex items-center justify-center text-xs"
+          >
+            ×
+          </button>
+        </div>
+      );
+    })}
+  </div>
+)}
                       </div>
                     </div>
                   </form>
