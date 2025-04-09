@@ -13,7 +13,7 @@ const CollectionProducts = () => {
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
-  
+
   const queryParams = Object.fromEntries([...searchParams]);
 
   const sidebarRef = useRef(null);
@@ -28,51 +28,61 @@ const CollectionProducts = () => {
   };
 
   const handleClickOutside = (e) => {
-    // Close sidebar if clicked outside
     if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
       setIsSidebarOpen(false);
     }
   };
 
   useEffect(() => {
-    // Add Event listner for clicks
     document.addEventListener("mousedown", handleClickOutside);
-    // clean event listener
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   return (
-    <div className="flex flex-col lg:flex-row">
-      {/* Mobile Filter button */}
+    <div className="bg-gradient-to-br from-indigo-50 to-purple-100 py-10 px-6 md:px-10 lg:px-12 min-h-screen flex flex-col lg:flex-row relative">
+      {/* Mobile Filter Button */}
       <button
         onClick={toggleSidebar}
-        className="lg:hidden border p-2 flex justify-center items-center"
+        className="fixed bottom-8 left-8 bg-purple-600 text-white shadow-lg rounded-full p-3 z-50 hover:bg-purple-700 focus:outline-none transition duration-300 ease-in-out lg:hidden"
       >
-        <FaFilter className="mr-2" /> Filters
+        <FaFilter className="h-5 w-5" />
       </button>
 
       {/* Filter Sidebar */}
-      <div
+      <aside
         ref={sidebarRef}
         className={`${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed inset-y-0 z-50 left-0 w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}
+          isSidebarOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"
+        } fixed inset-y-0 z-40 left-0 w-full sm:max-w-xs bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0 lg:border-r lg:border-gray-200`}
       >
-        <FilterSidebarPro />
-      </div>
-      <div className="flex-grow p-4">
-        <h2 className="text-2xl uppercase mb-4">All Collection</h2>
+        <div className="py-8 px-6">
+          <h3 className="text-xl font-semibold text-gray-800 mb-6 tracking-wide">Filter Products</h3>
+          <FilterSidebarPro />
+        </div>
+      </aside>
 
-        {/* Add Search Component */}
-        <SearchBar contextType="products" />
-        
+      {/* Main Content */}
+      <div className="flex-grow p-4 md:p-6 lg:pl-8">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 tracking-tight uppercase mb-4 md:mb-0">
+            {collection ? `${collection} Collection` : "All Products"}
+          </h2>
+          <div className="w-full md:w-auto">
+            <SearchBar contextType="products" />
+          </div>
+        </div>
+
         {/* Sort Options */}
-        <SortOptions />
+        <div className="mb-8">
+          <SortOptions />
+        </div>
 
         {/* Product Grid */}
-        <ProductGrid products={products} loading={loading} error={error} />
+        <div className="mt-8"> {/* Removed the grid class here */}
+          <ProductGrid products={products} loading={loading} error={error} />
+        </div>
       </div>
     </div>
   );

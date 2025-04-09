@@ -21,7 +21,7 @@ router.post("/register", async (req, res) => {
       name,
       email,
       password,
-      role: role || "user", // Default to "user" if role is not specified
+      role: role || "customer", // Default to "user" if role is not specified
     });
 
     await user.save();

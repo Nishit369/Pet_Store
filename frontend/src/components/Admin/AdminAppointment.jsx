@@ -5,23 +5,22 @@ import "react-toastify/dist/ReactToastify.css"
 // Component for displaying and managing a single appointment
 const AdminAppointment = ({ appointment, onUpdateStatus }) => {
   // Format date for display
-  console.log("this is appointment",appointment)
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
     });
   };
 
-  // Status badge color mapping
+  // Designer Purple-Blue Shading for Status Badges
   const statusColors = {
-    scheduled: 'bg-blue-100 text-blue-800',
-    confirmed: 'bg-green-100 text-green-800',
-    completed: 'bg-purple-100 text-purple-800',
-    rejected: 'bg-red-100 text-red-800',
-    pending: 'bg-yellow-100 text-yellow-800',
+    scheduled: 'bg-gradient-to-br from-blue-300 to-indigo-300 text-blue-800',
+    confirmed: 'bg-gradient-to-br from-green-300 to-teal-300 text-green-800',
+    completed: 'bg-gradient-to-br from-purple-300 to-pink-300 text-purple-800',
+    rejected: 'bg-gradient-to-br from-red-300 to-orange-300 text-red-800',
+    pending: 'bg-gradient-to-br from-yellow-300 to-amber-300 text-yellow-800',
   };
 
   // Handle status updates
@@ -29,135 +28,126 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
     toast.success(`Appointment ${newStatus} successfully!`);
     onUpdateStatus(appointment._id, newStatus);
   };
-  
 
-  // Determine which action buttons to show based on current status
+  // Designer Purple-Blue Action Buttons
   const renderActionButtons = () => {
-    switch(appointment.status.toLowerCase()) {
+    switch (appointment.status.toLowerCase()) {
       case 'confirmed':
         return (
-          <>
-           <button 
-            onClick={() => handleStatusUpdate('completed')}
-            className="px-3 py-1.5 bg-purple-600 text-white rounded hover:bg-purple-700 text-sm"
-          >
-            Complete
-          </button>
-         
-          
-          </>
-         
+          <div className="flex space-x-2">
+            <button
+              onClick={() => handleStatusUpdate('completed')}
+              className="px-4 py-2 bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-md hover:from-purple-700 hover:to-indigo-700 text-sm shadow-md transition duration-200 ease-in-out"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Complete
+            </button>
+          </div>
         );
       case 'completed':
       case 'rejected':
-        return  null; // No actions for completed or rejected appointments
-      default: // For pending, scheduled, or any other status
+        return null;
+      default:
         return (
-          <>
-            <button 
-              onClick={() => handleStatusUpdate('confirmed') }
-              className="px-3 py-1.5 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+          <div className="flex space-x-2">
+            <button
+              onClick={() => handleStatusUpdate('confirmed')}
+              className="px-4 py-2 bg-gradient-to-br from-green-600 to-blue-600 text-white rounded-md hover:from-green-700 hover:to-blue-700 text-sm shadow-md transition duration-200 ease-in-out"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
               Confirm
             </button>
-            <button 
+            <button
               onClick={() => handleStatusUpdate('rejected')}
-              className="px-3 py-1.5 bg-red-600 text-white rounded hover:bg-red-700 text-sm ml-2"
+              className="px-4 py-2 bg-gradient-to-br from-red-600 to-purple-600 text-white rounded-md hover:from-red-700 hover:to-purple-700 text-sm shadow-md transition duration-200 ease-in-out"
             >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
               Reject
             </button>
-          </>
+          </div>
         );
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300">
-      {/* Card Header */}
-      
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="font-bold text-lg text-gray-800">
-            Appointment for {appointment.doctor_id.name}
-          </h3>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status.toLowerCase()] || 'bg-gray-100 text-gray-800'}`}>
-            {appointment.status}
-          </span>
-        </div>
-        <p className="text-sm text-gray-600 mt-1">
-          Created: {new Date(appointment.createdAt).toLocaleString()}
-        </p>
-        {appointment.accepted_by && (
-  <p className="text-xs text-gray-500 mt-1">
-    Accepted By: <span className="font-medium text-white bg-indigo-600 p-1 px-3 mt-3 rounded-full">{appointment.accepted_by}</span>
-  </p>
-)}
+    <div className="bg-gradient-to-br from-blue-100 via-purple-200 to-blue-200 rounded-xl shadow-xl overflow-hidden border border-gray-200 hover:shadow-2xl transition-all duration-300 flex flex-col">
+      {/* Header Section with Designer Gradient */}
+      <div className="bg-gradient-to-r from-indigo-400 to-blue-500 p-4 border-b border-gray-300 flex items-center justify-between text-white">
+        <h3 className="font-bold text-lg ">
+          {appointment.doctor_id.user_id.name}
+        </h3>
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[appointment.status.toLowerCase()] || 'bg-gray-200 text-gray-800'}`}>
+          {appointment.status}
+        </span>
       </div>
-        {/* <ToastContainer /> */}
-      {/* Card Body */}
-      <div className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <div>
-              <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Patient</h4>
-              <div className="flex items-center mt-1">
-                <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                  {appointment.user_id.name ? appointment.user_id.name.charAt(0) : 'U'}
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-800">{appointment.user_id.name || 'Patient Name'}</p>
-                  <p className="text-xs text-gray-500">Email ID: {appointment.user_id.email}</p>
-                </div>
-              </div>
-            </div>
 
-            <div>
-              <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Doctor</h4>
-              <div className="flex items-center mt-1">
-                <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold">
-                  {appointment.doctor_id.name ? appointment.doctor_id.name.charAt(0) : 'D'}
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-800">{appointment.doctor_id?.name || 'Dr. Smith'}</p>
-                  <p className="text-xs text-gray-500">Qualification: {appointment.doctor_id.qualification}</p>
-                  <p className="text-xs text-gray-500">Description: {appointment.doctor_id.description}</p>
-                </div>
-              </div>
+      {/* Body Section */}
+      <div className="p-6 flex-grow bg-white">
+        <div className="mb-4">
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Patient Information</h4>
+          <div className="flex items-center">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-200 to-indigo-200 flex items-center justify-center text-blue-700 font-bold mr-3">
+              {appointment.user_id.name ? appointment.user_id.name.charAt(0) : 'U'}
             </div>
-          </div>
-
-          <div className="space-y-3">
             <div>
-              <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Schedule</h4>
-              <div className="mt-1">
-                <div className="flex items-center">
-                  <svg className="h-4 w-4 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span className="text-sm text-gray-700">{formatDate(appointment.date)}</span>
-                </div>
-                <div className="flex items-center mt-1">
-                  <svg className="h-4 w-4 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-sm text-gray-700">{appointment.time}</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</h4>
-              <p className="mt-1 text-sm text-gray-700 bg-gray-50 p-2 rounded">
-                {appointment.reason}
-              </p>
+              <p className="text-sm font-semibold text-gray-800">{appointment.user_id.name || 'Patient Name'}</p>
+              <p className="text-xs text-gray-500">Email: {appointment.user_id.email}</p>
             </div>
           </div>
         </div>
 
-        {/* Card Footer - Actions */}
-        <div className="flex justify-end space-x-2 mt-6">
-          {renderActionButtons()}
+        <div className="mb-4">
+          <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Doctor Information</h4>
+          <div className="flex items-center">
+            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-green-200 to-teal-200 flex items-center justify-center text-green-700 font-bold mr-3">
+              {appointment.doctor_id.user_id.name ? appointment.doctor_id.user_id.name.charAt(0) : 'D'}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-800">{appointment.doctor_id.user_id.name || 'Dr. Smith'}</p>
+              <p className="text-xs text-gray-500">Qualification: {appointment.doctor_id.qualification}</p>
+              <p className="text-xs text-gray-500">Description: {appointment.doctor_id.description.substring(0, 50)}...</p>
+            </div>
+          </div>
         </div>
+
+        <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div>
+            <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Date & Time</h4>
+            <div className="flex items-center text-sm text-gray-700">
+              <svg className="h-4 w-4 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {formatDate(appointment.date)}
+            </div>
+            <div className="flex items-center text-sm text-gray-700 mt-1">
+              <svg className="h-4 w-4 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {appointment.time}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2">Reason</h4>
+            <p className="text-sm text-gray-700 bg-blue-50 bg-opacity-50 p-2 rounded">{appointment.reason.substring(0, 60)}...</p>
+          </div>
+        </div>
+
+        {appointment.accepted_by && (
+          <p className="text-xs text-gray-500 mb-2">
+            Accepted By: <span className="font-medium text-indigo-600">{appointment.accepted_by}</span>
+          </p>
+        )}
+      </div>
+
+      {/* Footer Section with Designer Gradient */}
+      <div className="p-4 border-t border-gray-200 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-b-lg">
+        {renderActionButtons()}
       </div>
     </div>
   );
@@ -165,7 +155,6 @@ const AdminAppointment = ({ appointment, onUpdateStatus }) => {
 
 // Main component that renders a list of appointments
 const AppointmentsList = () => {
-  // Sample dummy data
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
@@ -176,7 +165,6 @@ const AppointmentsList = () => {
           throw new Error('Failed to fetch appointments');
         }
         const data = await response.json();
-        console.log(data);
         setAppointments(data);
       } catch (error) {
         console.error('Error:', error.message);
@@ -186,41 +174,38 @@ const AppointmentsList = () => {
     fetchAppointments();
   }, []);
 
-  // Update appointment status handler
   const handleUpdateStatus = async (appointmentId, newStatus) => {
-   try{
-    const response = await fetch(`http://localhost:9000/api/appointment/${appointmentId}`,{
+    try {
+      const response = await fetch(`http://localhost:9000/api/appointment/${appointmentId}`, {
         method: 'PUT',
         headers: {
-            'Content-Type' : 'application/json',
+          'Content-Type': 'application/json',
         },
-        body:JSON.stringify({status: newStatus, accepted_by:"admin"}),
-});
-if (!response.ok) {
-    throw new Error('Failed to update appointment status');
-  }
-
-  const data = await response.json();
-  console.log(data.message);
-  setAppointments(appointments.map(app =>
-    app._id === appointmentId ? { ...app, status: newStatus } : app
-  ));
-} catch (error) {
-  console.error('Error updating status:', error.message);
-}
-};
+        body: JSON.stringify({ status: newStatus, accepted_by: "admin" }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update appointment status');
+      }
+      const data = await response.json();
+      console.log(data.message);
+      setAppointments(appointments.map(app =>
+        app._id === appointmentId ? { ...app, status: newStatus } : app
+      ));
+    } catch (error) {
+      console.error('Error updating status:', error.message);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex justify-between items-center mb-6">
-        
-        <h1 className="text-2xl font-bold text-gray-800">Appointment Management</h1>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 text-white bg-clip-text text-transparent">Appointment Management</h1>
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-8">
         {appointments.map(appointment => (
-          <AdminAppointment 
+          <AdminAppointment
             key={appointment._id}
             appointment={appointment}
             onUpdateStatus={handleUpdateStatus}

@@ -6,7 +6,7 @@ import vetbanner from "../../assets/doct.avif";
 const DocAppBnr = () => {
   return (
     <section className="py-16 px-4 lg:px-0">
-        <div className=" container mx-auto flex flex-col-reverse lg:flex-row items-center bg-[#DAF6FF] rounded-3xl">
+        <div className=" container mx-auto flex flex-col-reverse lg:flex-row items-center bg-[#c2c2d2] rounded-3xl">
             {/** left content */}
             <div className="lg:w-1/2 p-8 text-center lg:text-left">
                 <h2 className="text-lg font-semibold text-gray-700 mb-2">
@@ -18,7 +18,7 @@ const DocAppBnr = () => {
                 <p className="text-lg text-gray-600 mb-6">
                     Schedule a hassle-free appointment with a veterinarian at your preferred date and time!
                 </p>
-                <Link to="/collection/all" className='bg-black text-white px-6 py-3 rounded-lg text-lg hover:bg-gray-700'>
+                <Link to="/doc" className='bg-black text-white px-6 py-3 rounded-lg text-lg hover:bg-gray-700'>
                     Book Now
                 </Link>
             </div>

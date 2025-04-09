@@ -88,17 +88,7 @@ const AdminSidebar = () => {
           <span>Orders</span>
         </NavLink>
      
-        <NavLink
-          to="/admin/shop"
-          className={({ isActive }) =>
-            isActive
-              ? "bg-gray-700 text-white py-3 px-4 rounded flex items-center space-x-2"
-              : "text-gray-300 hover:bg-gray-700 hover:text-white py-3 px-4 rounded flex items-center space-x-2"
-          }
-        >
-          <FaStore />
-          <span>Shop</span>
-        </NavLink>
+        
 
         <NavLink
           to="/admin/transaction-summary"

@@ -21,7 +21,6 @@ router.post("/", protect, admin, async (req, res) => {
       isFeatured,
       isPublished,
       tags,
-
       sku,
     } = req.body;
 
@@ -37,7 +36,6 @@ router.post("/", protect, admin, async (req, res) => {
       isFeatured,
       isPublished,
       tags,
-
       sku,
       user: req.user._id, // Reference to the admin user who created it
     });
@@ -66,7 +64,6 @@ router.put("/:id", protect, admin, async (req, res) => {
       isFeatured,
       isPublished,
       tags,
-
       sku,
     } = req.body;
 
@@ -140,7 +137,6 @@ router.get("/", async (req, res) => {
 
     let query = {};
 
-    // Your existing filter logic...
     if (brand) {
       query.brand = { $in: brand.split(",") };
     }
@@ -155,7 +151,6 @@ router.get("/", async (req, res) => {
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    // Make sure search is working as expected
     if (search) {
       query.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -165,7 +160,6 @@ router.get("/", async (req, res) => {
       ];
     }
 
-    // Your existing sorting logic...
     let sort = {};
     if (sortBy) {
       switch (sortBy) {
@@ -183,7 +177,6 @@ router.get("/", async (req, res) => {
       }
     }
 
-    // Fetch products and apply sorting and limit
     let products = await Product.find(query)
       .sort(sort)
       .limit(Number(limit) || 0);
@@ -212,6 +205,24 @@ router.get("/similar/:id", async (req, res) => {
     }).limit(4);
 
     res.json(similarProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+
+// @route GET /api/product/:id
+// @desc Get a single product by ID
+// @access Public
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");

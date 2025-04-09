@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { ChevronDownIcon } from "@heroicons/react/outline";
 
 const FilterSidebarPro = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,6 +14,7 @@ const FilterSidebarPro = () => {
   });
 
   const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [expandedFilters, setExpandedFilters] = useState({});
 
   const animals = [
     "Dogs",
@@ -20,7 +22,7 @@ const FilterSidebarPro = () => {
     "Birds",
     "Fish"
   ];
-  
+
   const brands = [
     "PawCare",
     "Feline Fresh",
@@ -54,19 +56,16 @@ const FilterSidebarPro = () => {
     const params = Object.fromEntries([...searchParams]);
     setFilters({
       animal: params.animal || "",
-      // Parse brand as an array if it exists
       brand: params.brand ? params.brand.split(",") : [],
       minPrice: params.minPrice || 0,
       maxPrice: params.maxPrice || 10000,
     });
     setPriceRange([0, params.maxPrice ? Number(params.maxPrice) : 10000]);
   }, [searchParams]);
-  
+
   const handleFilterChange = (e) => {
     const { name, value, checked, type } = e.target;
-    console.log({ name, value, checked, type })
     let newFilters = { ...filters };
-    console.log("this is new filter",newFilters)
 
     if (type === "checkbox") {
       if (checked) {
@@ -83,58 +82,54 @@ const FilterSidebarPro = () => {
 
   const updateURLParams = (newFilters) => {
     const params = new URLSearchParams(searchParams);
-  
+
     params.delete("animal");
     params.delete("brand");
     params.delete("minPrice");
     params.delete("maxPrice");
-  
+
     if (newFilters.animal) {
       params.set("animal", newFilters.animal);
     }
-  
+
     if (newFilters.brand && newFilters.brand.length > 0) {
       params.set("brand", newFilters.brand.join(","));
     }
-  
+
     if (newFilters.minPrice) {
       params.set("minPrice", newFilters.minPrice);
     }
-  
+
     if (newFilters.maxPrice) {
       params.set("maxPrice", newFilters.maxPrice);
     }
-  
-    console.log("Updated Search Params:", params.toString()); // 🛠 Debugging line
-  
+
     setSearchParams(params);
   };
-  
+
 
   const handlePriceChange = (e) => {
-    const newPrice = Number(e.target.value); // Ensure it's a number
-  
+    const newPrice = Number(e.target.value);
+
     setPriceRange([0, newPrice]);
-  
+
     const newFilters = { ...filters, minPrice: 0, maxPrice: newPrice };
-    
-    setFilters(newFilters); // Correctly update state
-    updateURLParams(newFilters); // Update the URL parameters
+
+    setFilters(newFilters);
+    updateURLParams(newFilters);
   };
 
   const handleClearAll = () => {
-    // Reset all filters to default values
     const defaultFilters = {
       animal: "",
       brand: [],
       minPrice: 0,
       maxPrice: 10000
     };
-    
+
     setFilters(defaultFilters);
     setPriceRange([0, 10000]);
-    
-    // Clear all filter params from URL but preserve other params
+
     const params = new URLSearchParams(searchParams);
     params.delete("animal");
     params.delete("brand");
@@ -143,66 +138,95 @@ const FilterSidebarPro = () => {
     setSearchParams(params);
   };
 
+  const toggleFilterGroup = (filterName) => {
+    setExpandedFilters(prev => ({
+      ...prev,
+      [filterName]: !prev[filterName],
+    }));
+  };
+
+  const isFilterGroupExpanded = (filterName) => !!expandedFilters[filterName];
+
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-medium text-gray-800">Filter</h3>
-        <button 
+    <div className="bg-white shadow rounded-md p-6 sticky top-20">
+      <div className="flex justify-between items-center mb-5">
+        <h3 className="text-xl font-semibold text-gray-800">Filter</h3>
+        <button
           onClick={handleClearAll}
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className="text-sm text-blue-600 hover:text-blue-800 focus:outline-none transition-colors duration-200"
         >
           Clear All
         </button>
       </div>
 
       {/* Animal Filter */}
-      <div className="mb-6">
-        <label className="block text-gray-600 font-medium mb-2">Animal</label>
-        {animals.map((animal) => (
-          <div key={animal} className="flex items-center mb-1">
-            <input
-              type="radio"
-              name="animal"
-              value={animal}
-              onChange={handleFilterChange}
-              checked={filters.animal === animal}
-              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
-            />
-            <span className="text-gray-700">{animal}</span>
+      <div className="mb-4 rounded-md border border-gray-200">
+        <button
+          onClick={() => toggleFilterGroup('animal')}
+          className="w-full flex justify-between items-center text-gray-800 font-semibold py-3 px-4 rounded-t-md focus:outline-none bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+        >
+          Animal
+          <ChevronDownIcon className={`w-5 h-5 text-gray-500 transition-transform ${isFilterGroupExpanded('animal') ? 'rotate-180' : ''}`} />
+        </button>
+        {isFilterGroupExpanded('animal') && (
+          <div className="mt-2 pl-4 pr-2 py-2">
+            {animals.map((animal) => (
+              <div key={animal} className="flex items-center mb-2">
+                <input
+                  type="radio"
+                  name="animal"
+                  value={animal}
+                  onChange={handleFilterChange}
+                  checked={filters.animal === animal}
+                  className="mr-3 h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded-full"
+                />
+                <label htmlFor={animal} className="text-gray-700">{animal}</label>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
-      
+
       {/* Brand Filter */}
-      <div className="mb-6">
-        <label className="block text-gray-600 font-medium mb-2">Brand</label>
-        {brands.map((brand) => (
-          <div key={brand} className="flex items-center mb-1">
-            <input
-              type="checkbox"
-              name="brand"
-              value={brand}
-              onChange={handleFilterChange}
-              checked={filters.brand.includes(brand)}
-              className="mr-2 h-4 w-4 text-blue-500 focus:ring-blue-400 border-gray-300"
-            />
-            <span className="text-gray-700">{brand}</span>
+      <div className="mb-4 rounded-md border border-gray-200">
+        <button
+          onClick={() => toggleFilterGroup('brand')}
+          className="w-full flex justify-between items-center text-gray-800 font-semibold py-3 px-4 focus:outline-none bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+        >
+          Brand
+          <ChevronDownIcon className={`w-5 h-5 text-gray-500 transition-transform ${isFilterGroupExpanded('brand') ? 'rotate-180' : ''}`} />
+        </button>
+        {isFilterGroupExpanded('brand') && (
+          <div className="mt-2 pl-4 pr-2 py-2">
+            {brands.map((brand) => (
+              <div key={brand} className="flex items-center mb-2">
+                <input
+                  type="checkbox"
+                  name="brand"
+                  value={brand}
+                  onChange={handleFilterChange}
+                  checked={filters.brand.includes(brand)}
+                  className="mr-3 h-5 w-5 text-blue-500 focus:ring-blue-400 border-gray-300 rounded"
+                />
+                <label htmlFor={brand} className="text-gray-700">{brand}</label>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
       </div>
 
       {/* Price Filter */}
-      <div className="mb-8">
-        <label className="block text-gray-600 font-medium mb-2">Price Range</label>
-      
+      <div className="mb-6 rounded-md border border-gray-200 p-4">
+        <label htmlFor="priceRange" className="block text-gray-600 font-semibold mb-3">Price Range</label>
+
         <input
           type="range"
-          name="priceRange" 
-          min={0} 
-          max={10000} 
+          name="priceRange"
+          min={0}
+          max={10000}
           value={priceRange[1]}
           onChange={handlePriceChange}
-          className="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer" 
+          className="w-full h-2 bg-blue-300 rounded-lg appearance-none cursor-pointer"
         />
         <div className="flex justify-between text-gray-600 mt-2">
           <span>Rs.0</span>

@@ -1,69 +1,49 @@
 import { useEffect, useState } from "react";
 import Hero from "../components/Layout/Hero";
 import DocAppBnr from "../components/Product/DocAppBnr";
-
 import MainPro from "../components/Product/MainPro";
-
-import NewArrivals from "../components/Product/NewArrivals";
-
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductsByFilters } from "../redux/slices/productsSlice";
 import axios from "axios";
-import ProductDetails from "../components/Product/ProductDetails";
 import ProductGrid from "../components/Product/ProductGrid";
-
+import ConsultationBanner from "../pages/ConsultationBanner"; // New component
+import FeaturedCategories from "../pages/FeaturedCategories"; // New component
 
 const Home = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
-  const [bestSellerProduct, setBestSellerProduct] = useState(null);
 
   useEffect(() => {
-    // Fetch products for a specific collection
+    // Fetch products for Dogs (you can adjust this or fetch more categories)
     dispatch(
       fetchProductsByFilters({
         animal: "Dogs",
         limit: 8,
       })
     );
-    // Fetch best seller product
-    const fetchBestSeller = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`
-        );
-        setBestSellerProduct(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchBestSeller();
   }, [dispatch]);
 
   return (
-    <div>
+    <div className="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen">
       <Hero />
       <MainPro />
-      {/* <NewArrivals /> */}
 
-      {/* Best Seller */}
-      <h2 className="text-3xl text-center font-bold mb-4">Best Seller</h2>
-      {bestSellerProduct ? (
-        <ProductDetails productId={bestSellerProduct._id} />
-      ) : (
-        <p className="text-center">Loading best seller product ...</p>
-      )}
+      {/* Featured Categories */}
+      <FeaturedCategories />
 
-      <div className="container mx-auto">
-        <h2 className="text-3xl text-center font-bold mb-4">
-          Top Wears for Women
+      {/* Online Consultation Banner */}
+      <ConsultationBanner />
+
+      <div className="container mx-auto py-8">
+        <h2 className="text-3xl text-center font-bold text-gray-800 mb-6">
+          Top Picks for Your Furry Friends
         </h2>
         <ProductGrid products={products} loading={loading} error={error} />
       </div>
 
       <DocAppBnr />
-      
     </div>
   );
 };
+
 export default Home;
